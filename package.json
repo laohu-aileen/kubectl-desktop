@@ -1,0 +1,73 @@
+{
+  "name": "kubectl-desktop",
+  "version": "0.0.1",
+  "description": "Kubectl图形化客户端",
+  "keywords": [
+    "kubectl",
+    "k8s"
+  ],
+  "main": "init.js",
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "develop": "gulp develop",
+    "test": "electron-mocha --renderer -R spec --require @babel/register test/**/*.spec.js",
+    "lint": "eslint --no-ignore tasks app test *.js",
+    "format": "npm run private:format -- --write",
+    "check-format": "npm run private:format -- --list-different",
+    "pack:mac": "gulp pack-mac",
+    "pack:win": "gulp pack-win",
+    "pack:linux": "gulp pack-linux",
+    "private:format": "prettier gulpfile.js babel.config.js \"tasks/*.js\" \"app/**/*.js\" \"test/**/*.js\""
+  },
+  "author": {
+    "name": "胡永强",
+    "email": "laohu-aileen@qq.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laohu-aileen/kubectl-desktop.git"
+  },
+  "bugs": {
+    "url": "https://github.com/laohu-aileen/kubectl-desktop/issues"
+  },
+  "homepage": "https://github.com/laohu-aileen/kubectl-desktop#readme",
+  "dependencies": {
+    "@babel/register": "^7.16.9",
+    "connected-react-router": "^6.9.2",
+    "history": "^5.2.0",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "react-router": "^6.2.1",
+    "redux": "^4.1.2",
+    "redux-actions": "^2.6.5",
+    "redux-localstorage": "^0.4.1",
+    "redux-thunk": "^2.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.10",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-decorators": "^7.16.7",
+    "@babel/preset-env": "^7.16.10",
+    "@babel/preset-react": "^7.16.7",
+    "babel-eslint": "^10.1.0",
+    "browser-sync": "^2.27.7",
+    "chai": "^4.3.4",
+    "electron": "^16.0.7",
+    "electron-builder": "^22.14.5",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-mocha": "^11.0.2",
+    "eslint": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react": "^7.28.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-inject-string": "^1.1.2",
+    "gulp-sourcemaps": "^3.0.0",
+    "prettier": "^2.5.1",
+    "redux-mock-store": "^1.5.4",
+    "rimraf": "^3.0.2"
+  }
+}

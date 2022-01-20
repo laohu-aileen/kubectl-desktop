@@ -1,0 +1,14 @@
+{
+  "javascript.validate.enable": false,
+  "javascript.preferences.quoteStyle": "single",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnPaste": true,
+  "search.exclude": {
+    "build/": true,
+    "dist/": true
+  }
+}
