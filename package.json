@@ -1,73 +1,54 @@
 {
   "name": "kubectl-desktop",
-  "version": "0.0.1",
-  "description": "Kubectl图形化客户端",
-  "keywords": [
-    "kubectl",
-    "k8s"
-  ],
-  "main": "init.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "target/main.js",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
-    "develop": "gulp develop",
-    "test": "electron-mocha --renderer -R spec --require @babel/register test/**/*.spec.js",
-    "lint": "eslint --no-ignore tasks app test *.js",
-    "format": "npm run private:format -- --write",
-    "check-format": "npm run private:format -- --list-different",
-    "pack:mac": "gulp pack-mac",
-    "pack:win": "gulp pack-win",
-    "pack:linux": "gulp pack-linux",
-    "private:format": "prettier gulpfile.js babel.config.js \"tasks/*.js\" \"app/**/*.js\" \"test/**/*.js\""
+    "dev": "gulp dev",
+    "compile": "gulp compile",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
-  "author": {
-    "name": "胡永强",
-    "email": "laohu-aileen@qq.com"
-  },
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/laohu-aileen/kubectl-desktop.git"
   },
+  "author": "",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/laohu-aileen/kubectl-desktop/issues"
   },
   "homepage": "https://github.com/laohu-aileen/kubectl-desktop#readme",
-  "dependencies": {
-    "@babel/register": "^7.16.9",
-    "connected-react-router": "^6.9.2",
-    "history": "^5.2.0",
-    "prop-types": "^15.8.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-redux": "^7.2.6",
-    "react-router": "^6.2.1",
-    "redux": "^4.1.2",
-    "redux-actions": "^2.6.5",
-    "redux-localstorage": "^0.4.1",
-    "redux-thunk": "^2.4.1"
-  },
   "devDependencies": {
-    "@babel/core": "^7.16.10",
-    "@babel/plugin-proposal-class-properties": "^7.16.7",
-    "@babel/plugin-proposal-decorators": "^7.16.7",
-    "@babel/preset-env": "^7.16.10",
+    "@babel/core": "^7.16.12",
+    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
-    "babel-eslint": "^10.1.0",
-    "browser-sync": "^2.27.7",
-    "chai": "^4.3.4",
-    "electron": "^16.0.7",
-    "electron-builder": "^22.14.5",
-    "electron-devtools-installer": "^3.2.0",
-    "electron-mocha": "^11.0.2",
-    "eslint": "^8.7.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-react": "^7.28.0",
+    "@babel/preset-typescript": "^7.16.7",
+    "@babel/runtime-corejs3": "^7.16.8",
+    "@types/gulp": "^4.0.9",
+    "@types/node": "^17.0.12",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/webpack": "^5.28.0",
+    "@types/webpack-stream": "^3.2.12",
+    "babel-loader": "^8.2.3",
+    "del": "^6.0.0",
+    "electron-connect": "^0.6.3",
+    "fork-ts-checker-webpack-plugin": "^6.5.0",
     "gulp": "^4.0.2",
-    "gulp-babel": "^8.0.0",
-    "gulp-inject-string": "^1.1.2",
-    "gulp-sourcemaps": "^3.0.0",
+    "gulp-cli": "^2.3.0",
+    "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.5.1",
-    "redux-mock-store": "^1.5.4",
-    "rimraf": "^3.0.2"
+    "terser-webpack-plugin": "^5.3.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5",
+    "webpack": "^5.67.0",
+    "webpack-merge": "^5.8.0",
+    "webpack-stream": "^7.0.0"
+  },
+  "dependencies": {
+    "electron": "^16.0.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }

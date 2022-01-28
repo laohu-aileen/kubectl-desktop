@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "主进程",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "sourceMaps": true,
+      "protocol": "inspector",
+      "preLaunchTask": "npm: compile",
+      "console": "integratedTerminal",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+      "runtimeArgs": [
+        "${workspaceRoot}/target/main.js"
+      ],
+    },
+    {
+      "name": "UI进程",
+      "type": "chrome",
+      "request": "launch",
+      "sourceMaps": true,
+      "webRoot": "${workspaceRoot}",
+      "preLaunchTask": "npm: compile",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+      "runtimeArgs": [
+        "${workspaceRoot}/target/main.js",
+        "--remote-debugging-port=9222"
+      ],
+    }
+  ]
+}
