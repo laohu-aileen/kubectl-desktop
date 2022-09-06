@@ -52,12 +52,12 @@ export default <Route[]>[
       {
         name: '控制器',
         path: '/workloads/deplayment',
-        component: './Home',
+        component: './workloads/Deplayment',
       },
       {
         name: '容器组',
         path: '/workloads/pods',
-        component: './Home',
+        component: './workloads/Pod',
       },
     ],
   },
