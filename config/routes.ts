@@ -46,6 +46,11 @@ export default <Route[]>[
     component: './Home',
   },
   {
+    name: '命名空间',
+    path: '/namespaces',
+    component: './namespaces',
+  },
+  {
     name: '工作负载',
     path: '/workloads',
     routes: [

@@ -1,5 +1,6 @@
 import { defineConfig } from '@umijs/max';
 import routes from './routes';
+import define from './define';
 
 export default defineConfig({
   antd: {},
@@ -9,6 +10,7 @@ export default defineConfig({
   request: {},
   npmClient: 'yarn',
   routes,
+  define,
   layout: {
     title: 'kubernetes',
   },

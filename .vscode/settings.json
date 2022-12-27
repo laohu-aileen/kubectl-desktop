@@ -1,0 +1,36 @@
+{
+  // 编辑器显示设置
+  "editor.tabSize": 2,
+  "editor.fontSize": 13,
+  // 自动格式化设置
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  // 自动代码美化
+  "prettier.requireConfig": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "javascript.suggestionActions.enabled": false,
+  // 启用代码检查
+  "eslint.run": "onType",
+  "eslint.alwaysShowStatus": true,
+  "eslint.format.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "html"
+  ],
+  // 设置文件关联
+  "files.associations": {
+    "*.ejs": "html",
+    "*.ts ": "typescript"
+  },
+  // 排除指定文件
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true
+  }
+}
