@@ -27,8 +27,4 @@ export interface Namespace {
   status: string;
 }
 
-export const namespaceRestful = new RESTFul<Namespace>('namespaces', [
-  'get',
-  'getAll',
-  'update',
-]);
+export const namespaceRestful = new RESTFul<Namespace>('namespaces');
