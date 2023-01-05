@@ -1,39 +1,4 @@
-interface Route {
-  /**
-   * 路由名称
-   */
-  name?: string;
-
-  /**
-   * 路由标题
-   */
-  title?: string;
-
-  /**
-   * 地址路径
-   */
-  path: string;
-
-  /**
-   * 组件路径
-   */
-  component?: string;
-
-  /**
-   * 子路由
-   */
-  routes?: Route[];
-
-  /**
-   * 跳转路由
-   */
-  redirect?: string;
-
-  /**
-   * 包装器
-   */
-  wrappers?: string[];
-}
+import { Route } from './types';
 
 export default <Route[]>[
   {
@@ -41,60 +6,82 @@ export default <Route[]>[
     redirect: '/home',
   },
   {
-    name: '首页',
+    name: '主页',
     path: '/home',
     component: './Home',
   },
   {
-    name: '命名空间',
-    path: '/namespaces',
-    component: './namespaces',
-  },
-  {
-    name: '工作负载',
-    path: '/workloads',
+    name: '集群',
+    path: '/cluster',
     routes: [
       {
-        name: '控制器',
-        path: '/workloads/deplayment',
-        component: './workloads/Deplayment',
+        name: '集群信息',
+        path: '/cluster/info',
+        component: './cluster/Info',
       },
       {
-        name: '容器组',
-        path: '/workloads/pods',
-        component: './workloads/Pod',
+        name: '节点管理',
+        path: '/cluster/nodes',
+        component: './cluster/Node',
+      },
+      {
+        name: '命名空间',
+        path: '/cluster/namespaces',
+        component: './cluster/Namespace',
       },
     ],
   },
   {
-    name: '网络',
-    path: '/network',
+    name: '运行环境',
+    path: '/environment/:ns',
     routes: [
       {
-        name: '服务',
-        path: '/network/service',
-        component: './Home',
+        name: '工作负载',
+        path: '/environment/:ns/workloads',
+        routes: [
+          {
+            name: '控制器',
+            path: '/environment/:ns/workloads/deplayment',
+            component: './workloads/Deplayment',
+          },
+          {
+            name: '容器组',
+            path: '/environment/:ns/workloads/pods',
+            component: './workloads/Pod',
+          },
+        ],
       },
       {
-        name: '路由',
-        path: '/network/route',
-        component: './Home',
+        name: '网络',
+        path: '/environment/:ns/network',
+        routes: [
+          {
+            name: '服务',
+            path: '/environment/:ns/network/service',
+            component: './Home',
+          },
+          {
+            name: '路由',
+            path: '/environment/:ns/network/route',
+            component: './Home',
+          },
+        ],
       },
-    ],
-  },
-  {
-    name: '配置管理',
-    path: '/configure',
-    routes: [
       {
-        name: '环境配置',
-        path: '/configure/public',
-        component: './Home',
-      },
-      {
-        name: '保密字典',
-        path: '/configure/secret',
-        component: './Home',
+        name: '配置管理',
+        path: '/environment/:ns/configure',
+        routes: [
+          {
+            name: '环境配置',
+            path: '/environment/:ns/configure/public',
+            component: './Home',
+          },
+          {
+            name: '保密字典',
+            path: '/environment/:ns/configure/secret',
+            component: './Home',
+          },
+        ],
       },
     ],
   },

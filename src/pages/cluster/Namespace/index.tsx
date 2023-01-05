@@ -1,9 +1,4 @@
-import {
-  PageContainer,
-  ProTable,
-  ProColumns,
-  ActionType,
-} from '@ant-design/pro-components';
+import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { namespaceRestful, Namespace } from '@/services/namespaces';
 import { Badge, Button, message, Popconfirm, Tag } from 'antd';
 import Editor from './editor';
@@ -95,32 +90,31 @@ export default () => {
   ];
 
   return (
-    <PageContainer ghost>
-      <ProTable<Namespace>
-        rowKey="uid"
-        actionRef={ref}
-        search={false}
-        columns={columns}
-        pagination={false}
-        polling={3000}
-        toolbar={{
-          actions: [
-            <Editor
-              title="创建命名空间"
-              key="create"
-              onFinish={() => {
-                message.success('提交成功');
-                ref.current?.reload();
-                return true;
-              }}
-            />,
-          ],
-        }}
-        request={async () => {
-          const data = await namespaceRestful.getAll();
-          return { data, success: true };
-        }}
-      />
-    </PageContainer>
+    <ProTable<Namespace>
+      rowKey="uid"
+      headerTitle="命名空间"
+      actionRef={ref}
+      search={false}
+      columns={columns}
+      pagination={false}
+      polling={3000}
+      toolbar={{
+        actions: [
+          <Editor
+            title="创建命名空间"
+            key="create"
+            onFinish={() => {
+              message.success('提交成功');
+              ref.current?.reload();
+              return true;
+            }}
+          />,
+        ],
+      }}
+      request={async () => {
+        const data = await namespaceRestful.getAll();
+        return { data, success: true };
+      }}
+    />
   );
 };

@@ -1,20 +1,27 @@
+import { ProLayoutProps } from '@ant-design/pro-components';
 import { RequestConfig } from '@umijs/max';
+import UserMenu from './components/UserMenu';
 declare const BASE_URL: string;
 
-// 全局初始化数据配置，用于 Layout 用户信息和权限初始化
-// 更多信息见文档：https://next.umijs.org/docs/api/runtime-config#getinitialstate
-export async function getInitialState(): Promise<{ name: string }> {
-  return { name: '@umijs/max' };
+export interface InitialState {
+  logged: boolean;
 }
 
-export const layout = () => {
-  return {
-    logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
-    menu: {
-      locale: false,
-    },
-  };
+export const getInitialState = async (): Promise<InitialState> => {
+  return { logged: true };
 };
+
+export const layout = (): ProLayoutProps => ({
+  title: 'KUBERNETES | 管理中心',
+  fixSiderbar: true,
+  layout: 'mix',
+  splitMenus: true,
+  rightContentRender: UserMenu,
+  menu: {
+    locale: false,
+    type: 'sub',
+  },
+});
 
 export const request: RequestConfig = {
   baseURL: BASE_URL,
