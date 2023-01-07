@@ -17,17 +17,33 @@ export default <Route[]>[
       {
         name: '集群信息',
         path: '/cluster/info',
-        component: './cluster/Info',
+        component: './cluster/info',
       },
       {
         name: '节点管理',
         path: '/cluster/nodes',
-        component: './cluster/Node',
+        component: './cluster/node',
       },
       {
         name: '命名空间',
         path: '/cluster/namespaces',
-        component: './cluster/Namespace',
+        component: './cluster/namespace',
+      },
+      {
+        name: '事件',
+        path: '/cluster/events',
+        component: './cluster/event',
+      },
+      {
+        name: '工作负载',
+        path: '/cluster/workloads',
+        routes: [
+          {
+            name: '服务部署',
+            path: '/cluster/workloads/services',
+            component: './cluster/workload/service',
+          },
+        ],
       },
     ],
   },

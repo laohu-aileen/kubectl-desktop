@@ -1,6 +1,6 @@
 import { ProLayoutProps } from '@ant-design/pro-components';
 import { RequestConfig } from '@umijs/max';
-import UserMenu from './components/UserMenu';
+import { UserMenu } from './components/layout';
 declare const BASE_URL: string;
 
 export interface InitialState {

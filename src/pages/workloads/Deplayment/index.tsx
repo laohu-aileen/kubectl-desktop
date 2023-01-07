@@ -1,4 +1,4 @@
-import { NamespaceFilterSelect } from '@/components/NamespaceSelect';
+import { NamespaceLightFilterSelect } from '@/components/namespace';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Tag, Dropdown } from 'antd';
@@ -118,7 +118,7 @@ export default () => {
       columns={columns}
       rowKey="name"
       toolbar={{
-        filter: <NamespaceFilterSelect />,
+        filter: <NamespaceLightFilterSelect />,
         menu: {
           type: 'tab',
           // activeKey: "tab1",
@@ -150,6 +150,7 @@ export default () => {
         },
         search: {
           placeholder: '名称/镜像',
+          onSearch: () => {},
         },
         actions: [
           // <Button key="image" type="primary">

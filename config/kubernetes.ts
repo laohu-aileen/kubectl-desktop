@@ -1,2 +1,25 @@
-import { ApiRoot, Client1_13, config } from 'kubernetes-client';
-export const client: ApiRoot = new Client1_13(config.fromKubeconfig());
+import {
+  KubeConfig,
+  CoreV1Api,
+  AppsV1Api,
+  BatchV1Api,
+  StorageV1Api,
+  RbacAuthorizationV1Api,
+  ApiextensionsV1Api,
+  NodeV1Api,
+  ApisApi,
+  CertificatesV1Api,
+} from '@kubernetes/client-node';
+
+const config = new KubeConfig();
+config.loadFromDefault();
+
+export const core = config.makeApiClient(CoreV1Api);
+export const apps = config.makeApiClient(AppsV1Api);
+export const batch = config.makeApiClient(BatchV1Api);
+export const storage = config.makeApiClient(StorageV1Api);
+export const rabc = config.makeApiClient(RbacAuthorizationV1Api);
+export const node = config.makeApiClient(NodeV1Api);
+export const extension = config.makeApiClient(ApiextensionsV1Api);
+export const api = config.makeApiClient(ApisApi);
+export const certificate = config.makeApiClient(CertificatesV1Api);

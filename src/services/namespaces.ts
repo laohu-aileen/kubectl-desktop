@@ -1,3 +1,5 @@
+import { V1Namespace } from '@kubernetes/client-node';
+import { request } from '@umijs/max';
 import { RESTFul } from './restful';
 
 export interface Namespace {
@@ -28,3 +30,16 @@ export interface Namespace {
 }
 
 export const namespaceRestful = new RESTFul<Namespace>('namespaces');
+
+export const listNamespace = (): Promise<V1Namespace[]> =>
+  request('namespaces', { method: 'GET' });
+
+export const listNamespaceLabels = async (): Promise<
+  { label?: string; value?: string }[]
+> => {
+  const data = await listNamespace();
+  return data.map((item) => ({
+    label: item.metadata?.name,
+    value: item.metadata?.name,
+  }));
+};
