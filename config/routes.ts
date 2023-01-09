@@ -30,11 +30,6 @@ export default <Route[]>[
         component: './cluster/namespace',
       },
       {
-        name: '事件',
-        path: '/cluster/events',
-        component: './cluster/event',
-      },
-      {
         name: '工作负载',
         path: '/cluster/workloads',
         routes: [
@@ -72,6 +67,27 @@ export default <Route[]>[
         ],
       },
       {
+        name: '存储',
+        path: '/cluster/volume',
+        routes: [
+          {
+            name: '可用空间',
+            path: '/cluster/volume/persistent-volume-claims',
+            component: './cluster/volume/persistent-volume-claim',
+          },
+          {
+            name: '存储空间',
+            path: '/cluster/volume/persistent-volume',
+            component: './cluster/volume/persistent-volume',
+          },
+          {
+            name: '存储类型',
+            path: '/cluster/volume/storage-classes',
+            component: './cluster/volume/storage-class',
+          },
+        ],
+      },
+      {
         name: '配置管理',
         path: '/cluster/config',
         routes: [
@@ -88,25 +104,45 @@ export default <Route[]>[
         ],
       },
       {
-        name: '存储',
-        path: '/cluster/volume',
+        name: '访问控制',
+        path: '/cluster/access',
         routes: [
           {
-            name: '已申请',
-            path: '/cluster/volume/persistent-volume-claims',
-            component: './Home',
+            name: '服务账户',
+            path: '/cluster/access/service-accounts',
+            component: './cluster/access/service-account',
           },
           {
-            name: '持久卷',
-            path: '/cluster/volume/persistent-volume',
-            component: './Home',
+            name: '集群角色',
+            path: '/cluster/access/cluster-roles',
+            component: './cluster/access/cluster-role',
           },
           {
-            name: '动态卷',
-            path: '/cluster/volume/storage-classes',
-            component: './Home',
+            name: '角色',
+            path: '/cluster/access/roles',
+            component: './cluster/access/role',
+          },
+          {
+            name: '集群角色绑定',
+            path: '/cluster/access/cluster-role-bindings',
+            component: './cluster/access/cluster-role-binding',
+          },
+          {
+            name: '角色绑定',
+            path: '/cluster/access/role-bindings',
+            component: './cluster/access/role-binding',
           },
         ],
+      },
+      {
+        name: '事件',
+        path: '/cluster/events',
+        component: './cluster/event',
+      },
+      {
+        name: '扩展',
+        path: '/cluster/custom-resource-definitions',
+        component: './cluster/custom-resource-definition',
       },
     ],
   },
