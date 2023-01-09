@@ -39,62 +39,71 @@ export default <Route[]>[
         path: '/cluster/workloads',
         routes: [
           {
-            name: '服务部署',
-            path: '/cluster/workloads/services',
-            component: './cluster/workload/service',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: '运行环境',
-    path: '/environment/:ns',
-    routes: [
-      {
-        name: '工作负载',
-        path: '/environment/:ns/workloads',
-        routes: [
-          {
-            name: '控制器',
-            path: '/environment/:ns/workloads/deplayment',
-            component: './workloads/Deplayment',
+            name: '进程',
+            path: '/cluster/workloads/process',
+            component: './cluster/workload/process',
           },
           {
-            name: '容器组',
-            path: '/environment/:ns/workloads/pods',
-            component: './workloads/Pod',
+            name: '任务',
+            path: '/cluster/workloads/jobs',
+            component: './cluster/workload/job',
+          },
+          {
+            name: '容器',
+            path: '/cluster/workloads/pods',
+            component: './cluster/workload/pod',
           },
         ],
       },
       {
         name: '网络',
-        path: '/environment/:ns/network',
+        path: '/cluster/network',
         routes: [
           {
             name: '服务',
-            path: '/environment/:ns/network/service',
-            component: './Home',
+            path: '/cluster/network/services',
+            component: './cluster/network/service',
           },
           {
             name: '路由',
-            path: '/environment/:ns/network/route',
-            component: './Home',
+            path: '/cluster/network/ingress',
+            component: './cluster/network/ingress',
           },
         ],
       },
       {
         name: '配置管理',
-        path: '/environment/:ns/configure',
+        path: '/cluster/config',
         routes: [
           {
             name: '环境配置',
-            path: '/environment/:ns/configure/public',
+            path: '/cluster/config/config',
+            component: './cluster/config/config',
+          },
+          {
+            name: '权重策略',
+            path: '/cluster/config/priority-classes',
+            component: './cluster/config/priority-class',
+          },
+        ],
+      },
+      {
+        name: '存储',
+        path: '/cluster/volume',
+        routes: [
+          {
+            name: '已申请',
+            path: '/cluster/volume/persistent-volume-claims',
             component: './Home',
           },
           {
-            name: '保密字典',
-            path: '/environment/:ns/configure/secret',
+            name: '持久卷',
+            path: '/cluster/volume/persistent-volume',
+            component: './Home',
+          },
+          {
+            name: '动态卷',
+            path: '/cluster/volume/storage-classes',
             component: './Home',
           },
         ],

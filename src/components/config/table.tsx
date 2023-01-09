@@ -1,55 +1,25 @@
 import {
-  listNamespacedDaemonSet,
-  listNamespacedDeployment,
-  listNamespacedStatefulSet,
+  listNamespacedConfigMap,
+  listNamespacedSecret,
   listNamespaceLabels,
 } from '@/services';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
-import {
-  V1Container,
-  V1DaemonSet,
-  V1Deployment,
-  V1StatefulSet,
-} from '@kubernetes/client-node';
-import { Button } from 'antd';
+import { V1ConfigMap, V1Secret } from '@kubernetes/client-node';
 import React, { useRef, useState } from 'react';
-import { TagColumn } from '../basic';
 import { v1 as uuid } from 'uuid';
 
-type Workload = V1Deployment | V1StatefulSet | V1DaemonSet;
+type Config = V1ConfigMap | V1Secret;
 
-export const WorkloadServiceTable = () => {
+export const ConfigTable = () => {
   const ref = useRef<ActionType>();
-  const [activeKey, setActiveKey] = useState<React.Key>('deployment');
+  const [activeKey, setActiveKey] = useState<React.Key>('config-map');
 
-  // 表字段
-  const columns: ProColumns<Workload>[] = [
+  // 公共字段
+  const columns: ProColumns<Config>[] = [
     {
       title: '名称',
       valueType: 'text',
       dataIndex: ['metadata', 'name'],
-      hideInSearch: true,
-    },
-    {
-      title: '容器组',
-      dataIndex: 'status',
-      hideInSearch: true,
-      render: ({ readyReplicas, replicas }: any) =>
-        `${readyReplicas}/${replicas}`,
-    },
-    {
-      title: '镜像',
-      dataIndex: ['spec', 'template', 'spec', 'containers'],
-      hideInSearch: true,
-      render: (value: V1Container[] & any) => {
-        const list = value.map((item: V1Container) => item?.image);
-        return <TagColumn value={list} />;
-      },
-    },
-    {
-      title: '创建时间',
-      dataIndex: ['metadata', 'creationTimestamp'],
-      valueType: 'dateTime',
       hideInSearch: true,
     },
     {
@@ -60,6 +30,27 @@ export const WorkloadServiceTable = () => {
       initialValue: 'default',
       hideInTable: true,
     },
+  ];
+
+  // 保密字典专有名词
+  if (activeKey === 'secret') {
+    columns.push({
+      title: '类型',
+      valueType: 'text',
+      dataIndex: 'type',
+      hideInSearch: true,
+    });
+  }
+
+  // 公共字段
+  columns.push(
+    {
+      title: '创建时间',
+      dataIndex: ['metadata', 'creationTimestamp'],
+      valueType: 'dateTime',
+      hideInSearch: true,
+    },
+
     {
       title: '操作',
       valueType: 'option',
@@ -79,11 +70,11 @@ export const WorkloadServiceTable = () => {
         </a>,
       ],
     },
-  ];
+  );
 
   // 渲染页
   return (
-    <ProTable<Workload>
+    <ProTable<Config, Config>
       actionRef={ref}
       columns={columns}
       toolbar={{
@@ -92,16 +83,12 @@ export const WorkloadServiceTable = () => {
           activeKey,
           items: [
             {
-              key: 'deployment',
-              label: <span>无状态服务</span>,
+              key: 'config-map',
+              label: <span>配置字典</span>,
             },
             {
-              key: 'stateful-set',
-              label: <span>有状态服务</span>,
-            },
-            {
-              key: 'daemon-set',
-              label: <span>守护进程集</span>,
+              key: 'secret',
+              label: <span>保密字典</span>,
             },
           ],
           onChange: (key) => {
@@ -110,12 +97,6 @@ export const WorkloadServiceTable = () => {
             ref.current?.reload();
           },
         },
-        actions: [
-          <Button key="image" type="primary">
-            镜像创建
-          </Button>,
-          <Button key="template">模板创建</Button>,
-        ],
       }}
       pagination={{
         pageSize: 10,
@@ -125,7 +106,7 @@ export const WorkloadServiceTable = () => {
       }}
       options={{
         search: {
-          placeholder: '名称/镜像',
+          placeholder: '名称',
         },
         setting: false,
         fullScreen: false,
@@ -134,22 +115,18 @@ export const WorkloadServiceTable = () => {
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async (params, sort, filter) => {
         console.log({ params, sort, filter });
-        if (!params.metadata.namespace) {
+        if (!params.metadata?.namespace) {
           return { success: true, data: [] };
         }
         const { namespace } = params.metadata;
-        let data: Workload[] = [];
+        let data: Config[] = [];
         switch (activeKey) {
-          case 'deployment': {
-            data = await listNamespacedDeployment(namespace);
+          case 'config-map': {
+            data = await listNamespacedConfigMap(namespace);
             break;
           }
-          case 'stateful-set': {
-            data = await listNamespacedStatefulSet(namespace);
-            break;
-          }
-          case 'daemon-set': {
-            data = await listNamespacedDaemonSet(namespace);
+          case 'secret': {
+            data = await listNamespacedSecret(namespace);
             break;
           }
         }
@@ -163,11 +140,6 @@ export const WorkloadServiceTable = () => {
               item.metadata.name.indexOf(keyword) !== -1
             ) {
               return true;
-            }
-            if (item.spec?.template.spec?.containers) {
-              for (const { image } of item.spec.template.spec.containers) {
-                if (image?.indexOf(keyword) !== -1) return true;
-              }
             }
             return false;
           }),

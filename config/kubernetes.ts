@@ -9,6 +9,8 @@ import {
   NodeV1Api,
   ApisApi,
   CertificatesV1Api,
+  NetworkingV1Api,
+  SchedulingV1Api,
 } from '@kubernetes/client-node';
 
 const config = new KubeConfig();
@@ -23,3 +25,5 @@ export const node = config.makeApiClient(NodeV1Api);
 export const extension = config.makeApiClient(ApiextensionsV1Api);
 export const api = config.makeApiClient(ApisApi);
 export const certificate = config.makeApiClient(CertificatesV1Api);
+export const network = config.makeApiClient(NetworkingV1Api);
+export const schedule = config.makeApiClient(SchedulingV1Api);
