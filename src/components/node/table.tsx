@@ -1,6 +1,6 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { V1Node } from '@kubernetes/client-node';
+import { V1Node, V1NodeAddress } from '@kubernetes/client-node';
 import { listNode } from '@/services';
 import { TagColumn } from '../basic';
 import { v1 as uuid } from 'uuid';
@@ -12,12 +12,40 @@ export const NodeTable = () => {
       title: '名称',
       valueType: 'text',
       dataIndex: ['metadata', 'name'],
-      width: 300,
     },
     {
-      title: '标签',
-      dataIndex: ['metadata', 'labels'],
-      render: (value: any) => <TagColumn value={value} />,
+      title: '网络',
+      dataIndex: ['status', 'addresses'],
+      render: (value: V1NodeAddress[] & any) => {
+        if (!(value instanceof Array)) return <div>-</div>;
+        const data = value.map(({ type, address }) => `${type}:${address}`);
+        return <TagColumn value={data} />;
+      },
+    },
+    {
+      title: '操作系统',
+      valueType: 'text',
+      dataIndex: ['status', 'nodeInfo', 'osImage'],
+    },
+    {
+      title: 'CPU',
+      valueType: 'text',
+      dataIndex: ['status', 'capacity', 'cpu'],
+    },
+    {
+      title: '内存',
+      valueType: 'text',
+      dataIndex: ['status', 'capacity', 'memory'],
+    },
+    {
+      title: '磁盘',
+      valueType: 'text',
+      dataIndex: ['status', 'capacity', 'ephemeral-storage'],
+    },
+    {
+      title: 'POD数',
+      valueType: 'text',
+      dataIndex: ['status', 'capacity', 'pods'],
     },
     {
       title: '创建时间',
