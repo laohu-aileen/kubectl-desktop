@@ -17,7 +17,8 @@ import {
   ProFormSelect,
 } from '@ant-design/pro-components';
 import { V1ConfigMap, V1Secret } from '@kubernetes/client-node';
-import { Divider, Form, message } from 'antd';
+import { Divider, message } from 'antd';
+import { useState } from 'react';
 
 export interface ConfigEditorProps {
   namespace: string;
@@ -31,7 +32,7 @@ export interface ConfigEditorProps {
 interface ConfigEditorForm {
   name: string;
   type: string;
-  encrypt: 'data' | 'stringData';
+  immutable: 0 | 1;
   data: {
     key: string;
     value: string;
@@ -39,7 +40,7 @@ interface ConfigEditorForm {
 }
 
 interface ConfigEditorData {
-  statement?: V1ConfigMap | V1Secret;
+  statement: V1ConfigMap | V1Secret;
   form: ConfigEditorForm;
 }
 
@@ -81,8 +82,11 @@ const submitConfigMap = async (
     data[key] = value;
   }
   value.data = data;
-  console.log({ value, form, namespace, statement });
+  value.immutable = !!form.immutable;
   if (statement) {
+    delete value.metadata?.creationTimestamp;
+    delete value.metadata?.resourceVersion;
+    delete value.metadata?.managedFields;
     await replaceNamespacedConfigMap(form.name, namespace, value);
   } else {
     await createNamespacedConfigMap(namespace, value);
@@ -113,13 +117,17 @@ const submitSecret = async (
     [key: string]: string;
   } = {};
   for (const { key, value } of form.data) {
-    data[key] = form.encrypt === 'data' ? window.btoa(value) : value;
+    data[key] = window.btoa(value);
   }
   value.type = form.type;
   delete value.data;
   delete value.stringData;
-  value[form.encrypt] = data;
+  value.data = data;
+  value.immutable = !!form.immutable;
   if (statement) {
+    delete value.metadata?.creationTimestamp;
+    delete value.metadata?.resourceVersion;
+    delete value.metadata?.managedFields;
     await replaceNamespacedSecret(form.name, namespace, value);
   } else {
     await createNamespacedSecret(namespace, value);
@@ -144,7 +152,7 @@ const requestConfigMapData = async (
     form: {
       name: statement.metadata?.name || '',
       type: 'Opaque',
-      encrypt: 'data',
+      immutable: statement.immutable ? 1 : 0,
       data: Object.keys(data).map((key) => ({
         key,
         value: data[key],
@@ -174,7 +182,7 @@ const requestSecretData = async (
     form: {
       name: statement.metadata?.name || '',
       type: statement.type || 'Opaque',
-      encrypt,
+      immutable: statement.immutable ? 1 : 0,
       data: Object.keys(data).map((key) => {
         let value = data[key];
         if (encrypt === 'data') {
@@ -200,65 +208,92 @@ export const ConfigEditor = ({
   trigger,
   secret,
 }: ConfigEditorProps) => {
-  const [form] = Form.useForm<ConfigEditorData>();
+  const [initialValues, setInitialValues] = useState<
+    V1ConfigMap | V1Secret | undefined
+  >(undefined);
+
   return (
-    <DrawerForm<ConfigEditorData>
-      form={form}
+    <DrawerForm<ConfigEditorForm>
       title={title || '编辑配置'}
       trigger={trigger || <a>编辑配置</a>}
       submitTimeout={2000}
+      disabled={initialValues?.immutable}
       drawerProps={{
         destroyOnClose: true,
       }}
-      onFinish={async ({ form, statement, ...other }) => {
-        console.log(11111, { form, statement, other });
+      onFinish={async (value) => {
         if (secret) {
-          await submitSecret(namespace, form, statement);
+          await submitSecret(namespace, value, initialValues);
         } else {
-          await submitConfigMap(namespace, form, statement);
+          await submitConfigMap(namespace, value, initialValues);
         }
         if (afterSubmit) return afterSubmit();
         message.success('保存成功');
         return true;
       }}
       request={async () => {
-        console.log({ name });
         if (!name) {
           return {
-            form: {
-              name: '',
-              type: 'Opaque',
-              encrypt: 'data',
-              data: [],
-            },
+            name: '',
+            type: 'Opaque',
+            immutable: 0,
+            data: [],
           };
         }
-        return secret
+        const { form, statement } = secret
           ? await requestSecretData(name, namespace)
           : await requestConfigMapData(name, namespace);
+        setInitialValues(statement);
+        return form;
       }}
     >
-      <ProFormText
-        name={['form', 'name']}
-        disabled={!!name}
-        required
-        label="名称"
-        extra="名称长度为 1-253 字符，只能包含小写字母、数字、中划线（-）和小数点（.)"
-      />
-
+      {secret ? (
+        <ProFormText
+          name="name"
+          disabled={!!name}
+          required
+          label="名称"
+          extra="名称长度为 1-253 字符，只能包含小写字母、数字、中划线（-）和小数点（.)"
+        />
+      ) : (
+        <ProForm.Group>
+          <ProFormText
+            name="name"
+            disabled={!!name}
+            required
+            label="名称"
+            extra="名称长度为 1-253 字符，只能包含小写字母、数字、中划线（-）和小数点（.)"
+          />
+          <ProFormRadio.Group
+            name="immutable"
+            label="禁用更新"
+            required
+            options={[
+              {
+                label: '关闭',
+                value: 0,
+              },
+              {
+                label: '打开',
+                value: 1,
+              },
+            ]}
+          />
+        </ProForm.Group>
+      )}
       {secret ? (
         <ProForm.Group>
           <ProFormSelect
-            name={['form', 'type']}
+            name="type"
             label="类型"
             required
             width="lg"
             showSearch
-            dependencies={['form']}
-            request={async ({ form, keyWords }) => {
+            dependencies={['type']}
+            request={async ({ type, keyWords }) => {
               const options = [...SystemSecretType];
-              if (form.type && !SystemSecretType.includes(form.type)) {
-                options.unshift(form.type);
+              if (type && !SystemSecretType.includes(type)) {
+                options.unshift(type);
               }
               if (keyWords && !SystemSecretType.includes(keyWords)) {
                 options.unshift(keyWords);
@@ -270,24 +305,31 @@ export const ConfigEditor = ({
             }}
           />
           <ProFormRadio.Group
-            name={['form', 'encrypt']}
-            label="编码"
+            name="immutable"
+            label="禁用更新"
             required
             options={[
               {
-                label: 'Base64',
-                value: 'data',
+                label: '关闭',
+                value: 0,
               },
               {
-                label: '字符串',
-                value: 'stringData',
+                label: '打开',
+                value: 1,
               },
             ]}
           />
         </ProForm.Group>
       ) : undefined}
       <Divider />
-      <ProFormList name={['form', 'data']} label="数据" required>
+      <ProFormList
+        name="data"
+        label="数据"
+        required
+        creatorButtonProps={initialValues?.immutable ? false : undefined}
+        deleteIconProps={initialValues?.immutable ? false : undefined}
+        copyIconProps={initialValues?.immutable ? false : undefined}
+      >
         <ProFormGroup key="group">
           <ProFormText width="sm" name="key" placeholder="名称" />
           <ProFormTextArea

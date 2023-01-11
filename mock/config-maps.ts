@@ -43,7 +43,7 @@ export default {
     req: any,
     res: any,
   ) => {
-    await core.deleteNamespacedSecret(req.params.name, req.params.namespace);
+    await core.deleteNamespacedConfigMap(req.params.name, req.params.namespace);
     res.json();
   },
 };

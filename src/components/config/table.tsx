@@ -30,6 +30,12 @@ export const ConfigTable = () => {
       hideInSearch: true,
     },
     {
+      title: '禁用更新',
+      dataIndex: 'immutable',
+      valueType: 'switch',
+      hideInSearch: true,
+    },
+    {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
@@ -58,7 +64,6 @@ export const ConfigTable = () => {
       hideInSearch: true,
       width: 200,
     },
-
     {
       title: '操作',
       valueType: 'option',
@@ -72,7 +77,7 @@ export const ConfigTable = () => {
               key="edit"
               name={metadata?.name}
               namespace={metadata?.namespace || ns}
-              title="编辑保密字典"
+              title="编辑配置"
               secret={secretMode}
               trigger={<a>编辑</a>}
               afterSubmit={() => {
@@ -139,7 +144,7 @@ export const ConfigTable = () => {
         actions: [
           <ConfigEditor
             key="edit"
-            title="新增保密字典"
+            title="新增配置"
             namespace={ns}
             secret={secretMode}
             trigger={
