@@ -1,18 +1,25 @@
 import {
+  deleteNamespacedConfigMap,
+  deleteNamespacedSecret,
   listNamespacedConfigMap,
   listNamespacedSecret,
   listNamespaceLabels,
 } from '@/services';
+import { PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { V1ConfigMap, V1Secret } from '@kubernetes/client-node';
+import { Button, message, Popconfirm } from 'antd';
 import React, { useRef, useState } from 'react';
 import { v1 as uuid } from 'uuid';
-
+import { ColumnActionTool } from '../basic/tools';
+import { ConfigEditor } from './editor';
 type Config = V1ConfigMap | V1Secret;
 
 export const ConfigTable = () => {
   const ref = useRef<ActionType>();
-  const [activeKey, setActiveKey] = useState<React.Key>('config-map');
+  const [activeKey, setActiveKey] = useState<React.Key>('configMap');
+  const [ns, setNs] = useState<string>('default');
+  const secretMode: boolean = activeKey === 'secret';
 
   // 公共字段
   const columns: ProColumns<Config>[] = [
@@ -27,13 +34,13 @@ export const ConfigTable = () => {
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
       request: listNamespaceLabels,
-      initialValue: 'default',
+      initialValue: ns,
       hideInTable: true,
     },
   ];
 
   // 保密字典专有名词
-  if (activeKey === 'secret') {
+  if (secretMode) {
     columns.push({
       title: '类型',
       valueType: 'text',
@@ -49,26 +56,58 @@ export const ConfigTable = () => {
       dataIndex: ['metadata', 'creationTimestamp'],
       valueType: 'dateTime',
       hideInSearch: true,
+      width: 200,
     },
 
     {
       title: '操作',
       valueType: 'option',
       hideInSearch: true,
-      render: () => [
-        <a key="info" type="primary">
-          详情
-        </a>,
-        <a key="edit" type="primary">
-          编辑
-        </a>,
-        <a key="replicas" type="primary">
-          伸缩
-        </a>,
-        <a key="monitor" type="primary">
-          监控
-        </a>,
-      ],
+      align: 'right',
+      width: 200,
+      render: (_, { metadata }) => (
+        <ColumnActionTool
+          actions={[
+            <ConfigEditor
+              key="edit"
+              name={metadata?.name}
+              namespace={metadata?.namespace || ns}
+              title="编辑保密字典"
+              secret={secretMode}
+              trigger={<a>编辑</a>}
+              afterSubmit={() => {
+                ref.current?.reload();
+                message.success('保存成功');
+                return true;
+              }}
+            />,
+            <Popconfirm
+              key="remove"
+              title="警告"
+              description="改操作不可撤销,你确定执行操作?"
+              onConfirm={async () => {
+                if (!metadata?.name) return;
+                if (!metadata?.namespace) return;
+                if (secretMode) {
+                  await deleteNamespacedSecret(
+                    metadata?.name,
+                    metadata?.namespace,
+                  );
+                } else {
+                  await deleteNamespacedConfigMap(
+                    metadata?.name,
+                    metadata?.namespace,
+                  );
+                }
+                ref.current?.reload();
+                message.success('操作成功');
+              }}
+            >
+              <a>删除</a>
+            </Popconfirm>,
+          ]}
+        />
+      ),
     },
   );
 
@@ -83,7 +122,7 @@ export const ConfigTable = () => {
           activeKey,
           items: [
             {
-              key: 'config-map',
+              key: 'configMap',
               label: <span>配置字典</span>,
             },
             {
@@ -97,6 +136,25 @@ export const ConfigTable = () => {
             ref.current?.reload();
           },
         },
+        actions: [
+          <ConfigEditor
+            key="edit"
+            title="新增保密字典"
+            namespace={ns}
+            secret={secretMode}
+            trigger={
+              <Button type="primary">
+                <PlusOutlined />
+                创建
+              </Button>
+            }
+            afterSubmit={() => {
+              ref.current?.reload();
+              message.success('保存成功');
+              return true;
+            }}
+          />,
+        ],
       }}
       pagination={{
         pageSize: 10,
@@ -113,15 +171,15 @@ export const ConfigTable = () => {
         density: false,
       }}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
-      request={async (params, sort, filter) => {
-        console.log({ params, sort, filter });
+      request={async (params) => {
         if (!params.metadata?.namespace) {
           return { success: true, data: [] };
         }
         const { namespace } = params.metadata;
+        if (namespace !== ns) setNs(namespace);
         let data: Config[] = [];
         switch (activeKey) {
-          case 'config-map': {
+          case 'configMap': {
             data = await listNamespacedConfigMap(namespace);
             break;
           }

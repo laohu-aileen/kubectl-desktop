@@ -60,7 +60,7 @@ export const PersistentVolumeTable = () => {
 
   return (
     <ProTable<V1PersistentVolume, V1PersistentVolume>
-      headerTitle="存储空间"
+      headerTitle="存储卷"
       actionRef={ref}
       search={false}
       columns={columns}

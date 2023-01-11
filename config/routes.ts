@@ -71,17 +71,17 @@ export default <Route[]>[
         path: '/cluster/volume',
         routes: [
           {
-            name: '可用空间',
+            name: '存储声明',
             path: '/cluster/volume/persistent-volume-claims',
             component: './cluster/volume/persistent-volume-claim',
           },
           {
-            name: '存储空间',
+            name: '存储卷',
             path: '/cluster/volume/persistent-volume',
             component: './cluster/volume/persistent-volume',
           },
           {
-            name: '存储类型',
+            name: '存储类',
             path: '/cluster/volume/storage-classes',
             component: './cluster/volume/storage-class',
           },

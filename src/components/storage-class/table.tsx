@@ -30,7 +30,7 @@ export const StorageClassTable = () => {
 
   return (
     <ProTable<V1StorageClass, V1StorageClass>
-      headerTitle="存储类型"
+      headerTitle="存储类"
       actionRef={ref}
       search={false}
       columns={columns}

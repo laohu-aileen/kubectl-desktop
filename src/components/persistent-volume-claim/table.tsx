@@ -70,7 +70,7 @@ export const PersistentVolumeClaimTable = () => {
 
   return (
     <ProTable<V1PersistentVolumeClaim, V1PersistentVolumeClaim>
-      headerTitle="可用空间"
+      headerTitle="存储声明"
       actionRef={ref}
       columns={columns}
       options={{
