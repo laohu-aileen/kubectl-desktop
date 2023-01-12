@@ -27,7 +27,7 @@ export const replaceNamespacedSecret = (
   name: string,
   namespace: string,
   data: V1Secret,
-): Promise<V1Secret> =>
+): Promise<void> =>
   request(`namespace/${namespace}/secrets/${name}`, {
     method: 'PUT',
     data,
@@ -36,7 +36,7 @@ export const replaceNamespacedSecret = (
 export const deleteNamespacedSecret = (
   name: string,
   namespace: string,
-): Promise<V1Secret> =>
+): Promise<void> =>
   request(`namespace/${namespace}/secrets/${name}`, {
     method: 'DELETE',
   });

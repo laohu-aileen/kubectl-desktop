@@ -4,7 +4,7 @@ import { NamespaceModalForm } from './editor';
 import { useRef } from 'react';
 import style from './style.less';
 import { V1Namespace } from '@kubernetes/client-node';
-import { listNamespace } from '@/services';
+import { deleteNamespace, listNamespace } from '@/services';
 import { TagColumn } from '../basic';
 import { v1 as uuid } from 'uuid';
 
@@ -27,7 +27,14 @@ export const NamespaceTable = () => {
       dataIndex: ['status', 'phase'],
       width: 180,
       valueEnum: {
-        Active: { text: '运行中', status: 'Success' },
+        Active: {
+          text: '运行中',
+          status: 'Success',
+        },
+        Terminating: {
+          text: '停止中',
+          status: 'Warning',
+        },
       },
     },
     {
@@ -53,18 +60,23 @@ export const NamespaceTable = () => {
               编辑
             </Button>
           }
-          data={record}
-          onFinish={() => {
-            message.success('提交成功');
+          name={record.metadata?.name}
+          afterSubmit={() => {
             ref.current?.reload();
+            message.success('保存成功');
             return true;
           }}
         />,
         <Popconfirm
           key="remove"
-          title="删除命名空间"
+          title="警告"
           description="改操作不可撤销,你确定执行操作?"
           onConfirm={async () => {
+            if (!record.metadata?.name) {
+              ref.current?.reload();
+              return;
+            }
+            await deleteNamespace(record.metadata.name);
             message.success('提交成功');
             ref.current?.reload();
           }}
@@ -94,9 +106,9 @@ export const NamespaceTable = () => {
           <NamespaceModalForm
             title="创建命名空间"
             key="create"
-            onFinish={() => {
-              message.success('提交成功');
+            afterSubmit={() => {
               ref.current?.reload();
+              message.success('保存成功');
               return true;
             }}
           />,

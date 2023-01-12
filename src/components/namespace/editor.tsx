@@ -1,16 +1,17 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Form, message } from 'antd';
+import { Button, Divider, message } from 'antd';
 import {
   ModalForm,
   ProFormText,
   ProFormGroup,
   ProFormList,
 } from '@ant-design/pro-components';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { V1Namespace } from '@kubernetes/client-node';
+import { createNamespace, readNamespace, replaceNamespace } from '@/services';
 
 interface FormData {
-  name?: string;
+  name: string;
   labels: {
     key: string;
     value: string;
@@ -20,40 +21,30 @@ interface FormData {
 interface FormProps {
   title?: string;
   trigger?: JSX.Element;
-  data?: V1Namespace;
-  onFinish?: () => boolean;
+  name?: string;
+  afterSubmit?: () => boolean;
 }
 
-export const NamespaceModalForm = (props: FormProps) => {
-  const [form] = Form.useForm<FormData>();
-  const trigger = props.trigger || (
-    <Button type="primary">
-      <PlusOutlined />
-      创建
-    </Button>
+export const NamespaceModalForm = ({
+  name,
+  trigger,
+  title,
+  afterSubmit,
+}: FormProps) => {
+  const [initialValues, setInitialValues] = useState<V1Namespace | undefined>(
+    undefined,
   );
-
-  useEffect(() => {
-    if (!props.data) return;
-    const data: FormData = {
-      name: props.data.metadata?.name,
-      labels: [],
-    };
-    // for (const key in props.data.metadata || {}) {
-    //   if (!props.data.labels.hasOwnProperty(key)) continue;
-    //   data.labels.push({
-    //     key,
-    //     value: props.data.labels[key],
-    //   });
-    // }
-    form.setFieldsValue(data);
-  }, [props.data]);
-
   return (
     <ModalForm<FormData>
-      form={form}
-      title={props.title}
-      trigger={trigger}
+      title={title || '命名空间'}
+      trigger={
+        trigger || (
+          <Button type="primary">
+            <PlusOutlined />
+            创建
+          </Button>
+        )
+      }
       layout="horizontal"
       modalProps={{
         forceRender: true,
@@ -65,32 +56,56 @@ export const NamespaceModalForm = (props: FormProps) => {
         span: 18,
       }}
       onFinish={async (values) => {
-        // const labels: any = {};
-        // for (const item of values.labels || []) {
-        //   labels[item.key] = item.value;
-        // }
-        // if (props.data) {
-        //   await namespaceRestful.put(values.name, { labels });
-        // } else {
-        //   await namespaceRestful.create({
-        //     name: values.name,
-        //     labels,
-        //   });
-        //   form.resetFields();
-        // }
-        // if (props.onFinish) {
-        //   return props.onFinish();
-        // }
-        console.log(values);
-        message.success('提交成功');
+        const labels: { [key: string]: string } = {};
+        for (const { key, value } of values.labels) {
+          labels[key] = value;
+        }
+        const data: V1Namespace = initialValues || {
+          apiVersion: 'v1',
+          kind: 'Namespace',
+        };
+        if (!data.metadata) {
+          data.metadata = {
+            name: name || values.name,
+          };
+        }
+        data.metadata.labels = labels;
+        delete data.status;
+        delete data.metadata.creationTimestamp;
+        delete data.metadata.resourceVersion;
+        delete data.metadata.managedFields;
+        if (initialValues) {
+          await replaceNamespace(values.name, data);
+        } else {
+          await createNamespace(data);
+        }
+        if (afterSubmit) return afterSubmit();
+        message.success('保存成功');
         return true;
+      }}
+      request={async () => {
+        if (!name) {
+          return {
+            name: '',
+            labels: [],
+          };
+        }
+        const data = await readNamespace(name);
+        setInitialValues(data);
+        const labels = data.metadata?.labels || {};
+        return {
+          name: data.metadata?.name || '',
+          labels: Object.keys(labels).map((item) => ({
+            key: item,
+            value: item,
+          })),
+        };
       }}
     >
       <Divider style={{ margin: '12px 0 24px' }} />
       <ProFormText
         name="name"
         label="名称"
-        disabled={!!props.data}
         extra="长度为 1 ~ 63 个字符，只能包含数字、小写字母和中划线（-），且首尾只能是字母或数字"
       />
       <ProFormList name="labels" label="标签">

@@ -1,35 +1,5 @@
 import { V1Namespace } from '@kubernetes/client-node';
 import { request } from '@umijs/max';
-import { RESTFul } from './restful';
-
-export interface Namespace {
-  /**
-   * 资源ID
-   */
-  uid: string;
-
-  /**
-   * 名称
-   */
-  name: string;
-
-  /**
-   * 创建时间(时间戳)
-   */
-  creationTimestamp: number;
-
-  /**
-   * 标签
-   */
-  labels: { [key: string]: string };
-
-  /**
-   * 状态
-   */
-  status: string;
-}
-
-export const namespaceRestful = new RESTFul<Namespace>('namespaces');
 
 export const listNamespace = (): Promise<V1Namespace[]> =>
   request('namespaces', { method: 'GET' });
@@ -43,3 +13,18 @@ export const listNamespaceLabels = async (): Promise<
     value: item.metadata?.name,
   }));
 };
+
+export const readNamespace = (name: string): Promise<V1Namespace> =>
+  request(`namespaces/${name}`, { method: 'GET' });
+
+export const createNamespace = (data: V1Namespace): Promise<V1Namespace> =>
+  request(`namespaces`, { method: 'POST', data });
+
+export const replaceNamespace = (
+  name: string,
+  data: V1Namespace,
+): Promise<V1Namespace> =>
+  request(`namespaces/${name}`, { method: 'PUT', data });
+
+export const deleteNamespace = (name: string): Promise<V1Namespace> =>
+  request(`namespaces/${name}`, { method: 'DELETE' });

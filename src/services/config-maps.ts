@@ -29,7 +29,7 @@ export const replaceNamespacedConfigMap = (
   name: string,
   namespace: string,
   data: V1ConfigMap,
-): Promise<V1ConfigMap> =>
+): Promise<void> =>
   request(`namespace/${namespace}/config-maps/${name}`, {
     method: 'PUT',
     data,
@@ -38,7 +38,7 @@ export const replaceNamespacedConfigMap = (
 export const deleteNamespacedConfigMap = (
   name: string,
   namespace: string,
-): Promise<V1ConfigMap> =>
+): Promise<void> =>
   request(`namespace/${namespace}/config-maps/${name}`, {
     method: 'DELETE',
   });
