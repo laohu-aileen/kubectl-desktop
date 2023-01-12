@@ -54,6 +54,7 @@ export const EventTable = () => {
       request: listNamespaceLabels,
       initialValue: 'default',
       hideInTable: true,
+      fieldProps: { allowClear: false },
     },
   ];
 

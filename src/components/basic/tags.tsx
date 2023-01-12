@@ -11,7 +11,11 @@ export interface TagColumnProps {
  * @returns
  */
 export const TagColumn = ({ value }: TagColumnProps) => {
-  if (!value) return <div />;
+  if (!value) return <div>-</div>;
+  if (typeof value === 'string') {
+    if (value === '-') return <div>-</div>;
+    return <Tag color="blue">{value}</Tag>;
+  }
   const labels = [];
   if (value instanceof Array) {
     for (const key of value) {
@@ -34,5 +38,6 @@ export const TagColumn = ({ value }: TagColumnProps) => {
       );
     }
   }
+  if (!labels.length) return <div>-</div>;
   return <div>{labels}</div>;
 };

@@ -2,6 +2,7 @@ import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1StorageClass } from '@kubernetes/client-node';
 import { listStorageClass } from '@/services';
+import { TagColumn } from '../basic';
 import { v1 as uuid } from 'uuid';
 
 export const StorageClassTable = () => {
@@ -15,6 +16,11 @@ export const StorageClassTable = () => {
     {
       title: '提供者',
       dataIndex: 'provisioner',
+    },
+    {
+      title: '参数',
+      dataIndex: 'parameters',
+      render: (value: any) => <TagColumn value={value} />,
     },
     {
       title: '回收策略',

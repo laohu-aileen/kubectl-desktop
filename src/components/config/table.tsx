@@ -11,7 +11,7 @@ import { V1ConfigMap, V1Secret } from '@kubernetes/client-node';
 import { Button, message, Popconfirm } from 'antd';
 import React, { useRef, useState } from 'react';
 import { v1 as uuid } from 'uuid';
-import { ColumnActionTool } from '../basic/tools';
+import { ColumnActionTool } from '../basic';
 import { ConfigEditor } from './editor';
 type Config = V1ConfigMap | V1Secret;
 
@@ -42,6 +42,7 @@ export const ConfigTable = () => {
       request: listNamespaceLabels,
       initialValue: ns,
       hideInTable: true,
+      fieldProps: { allowClear: false },
     },
   ];
 

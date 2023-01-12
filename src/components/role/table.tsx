@@ -27,6 +27,7 @@ export const RoleTable = () => {
       request: listNamespaceLabels,
       initialValue: 'default',
       hideInTable: true,
+      fieldProps: { allowClear: false },
     },
     {
       title: '操作',

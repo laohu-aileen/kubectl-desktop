@@ -5,6 +5,7 @@ import {
   listNamespacedPersistentVolumeClaim,
   listNamespaceLabels,
 } from '@/services';
+import { TagColumn } from '../basic';
 import { v1 as uuid } from 'uuid';
 
 export const PersistentVolumeClaimTable = () => {
@@ -17,15 +18,39 @@ export const PersistentVolumeClaimTable = () => {
       hideInSearch: true,
     },
     {
-      title: '类型',
+      title: '总量',
+      valueType: 'text',
+      dataIndex: ['spec', 'resources', 'requests', 'storage'],
+      hideInSearch: true,
+    },
+    {
+      title: '访问模式',
+      valueType: 'text',
+      dataIndex: ['spec', 'accessModes'],
+      hideInSearch: true,
+      render: (value: any) => <TagColumn value={value} />,
+    },
+    {
+      title: '状态',
+      dataIndex: ['status', 'phase'],
+      hideInSearch: true,
+      valueEnum: {
+        Available: { text: '可用', status: 'Success' },
+        Bound: { text: '绑定', status: 'Success' },
+        Released: { text: '释放', status: 'Warning' },
+        Failed: { text: '失败', status: 'Error' },
+      },
+    },
+    {
+      title: '存储类型',
       valueType: 'text',
       dataIndex: ['spec', 'storageClassName'],
       hideInSearch: true,
     },
     {
-      title: '空间',
+      title: '关联存储卷',
       valueType: 'text',
-      dataIndex: ['spec', 'resources', 'requests', 'storage'],
+      dataIndex: ['spec', 'volumeName'],
       hideInSearch: true,
     },
     {
@@ -42,29 +67,7 @@ export const PersistentVolumeClaimTable = () => {
       request: listNamespaceLabels,
       initialValue: 'default',
       hideInTable: true,
-    },
-    {
-      title: '状态',
-      dataIndex: ['status', 'phase'],
-      valueEnum: {
-        Bound: { text: '活跃', status: 'Success' },
-      },
-    },
-    {
-      title: '操作',
-      valueType: 'option',
-      hideInSearch: true,
-      render: () => [
-        <a key="info" type="primary">
-          详情
-        </a>,
-        <a key="edit" type="primary">
-          编辑
-        </a>,
-        <a key="delete" type="primary">
-          删除
-        </a>,
-      ],
+      fieldProps: { allowClear: false },
     },
   ];
 

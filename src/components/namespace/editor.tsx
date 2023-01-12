@@ -1,10 +1,10 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, message } from 'antd';
 import {
-  ModalForm,
   ProFormText,
   ProFormGroup,
   ProFormList,
+  DrawerForm,
 } from '@ant-design/pro-components';
 import { useState } from 'react';
 import { V1Namespace } from '@kubernetes/client-node';
@@ -35,7 +35,7 @@ export const NamespaceModalForm = ({
     undefined,
   );
   return (
-    <ModalForm<FormData>
+    <DrawerForm<FormData>
       title={title || '命名空间'}
       trigger={
         trigger || (
@@ -45,15 +45,8 @@ export const NamespaceModalForm = ({
           </Button>
         )
       }
-      layout="horizontal"
-      modalProps={{
-        forceRender: true,
-      }}
-      labelCol={{
-        span: 2,
-      }}
-      wrapperCol={{
-        span: 18,
+      drawerProps={{
+        destroyOnClose: true,
       }}
       onFinish={async (values) => {
         const labels: { [key: string]: string } = {};
@@ -91,6 +84,9 @@ export const NamespaceModalForm = ({
           };
         }
         const data = await readNamespace(name);
+        if (data.metadata?.labels) {
+          delete data.metadata.labels['kubernetes.io/metadata.name'];
+        }
         setInitialValues(data);
         const labels = data.metadata?.labels || {};
         return {
@@ -102,18 +98,19 @@ export const NamespaceModalForm = ({
         };
       }}
     >
-      <Divider style={{ margin: '12px 0 24px' }} />
       <ProFormText
         name="name"
         label="名称"
         extra="长度为 1 ~ 63 个字符，只能包含数字、小写字母和中划线（-），且首尾只能是字母或数字"
+        required
       />
+      <Divider />
       <ProFormList name="labels" label="标签">
         <ProFormGroup key="labels">
           <ProFormText name="key" placeholder="变量名称" />
           <ProFormText name="value" placeholder="变量值" />
         </ProFormGroup>
       </ProFormList>
-    </ModalForm>
+    </DrawerForm>
   );
 };

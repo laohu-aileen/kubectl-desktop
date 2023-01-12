@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import style from './style.less';
 import { V1Namespace } from '@kubernetes/client-node';
 import { deleteNamespace, listNamespace } from '@/services';
-import { TagColumn } from '../basic';
+import { TagColumn, ColumnActionTool } from '../basic';
 import { v1 as uuid } from 'uuid';
 
 export const NamespaceTable = () => {
@@ -46,50 +46,55 @@ export const NamespaceTable = () => {
     {
       title: '操作',
       valueType: 'option',
+      align: 'right',
       width: 200,
-      render: (_, record) => [
-        <NamespaceModalForm
-          title="编辑命名空间"
-          key="edit"
-          trigger={
-            <Button
-              className={style.actionBtn}
-              disabled={record.status?.phase !== 'Active'}
-              type="link"
+      render: (_, record) => (
+        <ColumnActionTool
+          actions={[
+            <NamespaceModalForm
+              title="编辑命名空间"
+              key="edit"
+              trigger={
+                <Button
+                  className={style.actionBtn}
+                  disabled={record.status?.phase !== 'Active'}
+                  type="link"
+                >
+                  编辑
+                </Button>
+              }
+              name={record.metadata?.name}
+              afterSubmit={() => {
+                ref.current?.reload();
+                message.success('保存成功');
+                return true;
+              }}
+            />,
+            <Popconfirm
+              key="remove"
+              title="警告"
+              description="改操作不可撤销,你确定执行操作?"
+              onConfirm={async () => {
+                if (!record.metadata?.name) {
+                  ref.current?.reload();
+                  return;
+                }
+                await deleteNamespace(record.metadata.name);
+                message.success('提交成功');
+                ref.current?.reload();
+              }}
             >
-              编辑
-            </Button>
-          }
-          name={record.metadata?.name}
-          afterSubmit={() => {
-            ref.current?.reload();
-            message.success('保存成功');
-            return true;
-          }}
-        />,
-        <Popconfirm
-          key="remove"
-          title="警告"
-          description="改操作不可撤销,你确定执行操作?"
-          onConfirm={async () => {
-            if (!record.metadata?.name) {
-              ref.current?.reload();
-              return;
-            }
-            await deleteNamespace(record.metadata.name);
-            message.success('提交成功');
-            ref.current?.reload();
-          }}
-        >
-          <Button
-            className={style.actionBtn}
-            disabled={record.status?.phase !== 'Active'}
-            type="link"
-          >
-            删除
-          </Button>
-        </Popconfirm>,
-      ],
+              <Button
+                className={style.actionBtn}
+                disabled={record.status?.phase !== 'Active'}
+                type="link"
+              >
+                删除
+              </Button>
+            </Popconfirm>,
+          ]}
+        />
+      ),
     },
   ];
 
@@ -117,6 +122,10 @@ export const NamespaceTable = () => {
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async () => {
         const data = await listNamespace();
+        for (const item of data) {
+          if (!item.metadata?.labels) continue;
+          delete item.metadata.labels['kubernetes.io/metadata.name'];
+        }
         return { data, success: true };
       }}
     />
