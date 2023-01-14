@@ -1,49 +1,46 @@
 import { core } from '../config/kubernetes';
+import { Request, Response } from 'express';
+import { V1ConfigMap } from '@kubernetes/client-node';
 
 export default {
   'GET /api/v1/namespace/:namespace/config-maps': async (
-    req: any,
-    res: any,
+    req: Request<{ namespace: string }>,
+    res: Response<V1ConfigMap[]>,
   ) => {
-    const data = await core.listNamespacedConfigMap(req.params.namespace);
+    const { namespace } = req.params;
+    const data = await core.listNamespacedConfigMap(namespace);
     res.json(data.body.items);
   },
-  'GET /api/v1/namespace/:namespace/config-maps/:name': async (
-    req: any,
-    res: any,
+  'POST /api/v1/namespace/:namespace/config-maps': async (
+    req: Request<{ namespace: string }>,
+    res: Response<V1ConfigMap>,
   ) => {
-    const data = await core.readNamespacedConfigMap(
-      req.params.name,
-      req.params.namespace,
-    );
+    const { namespace } = req.params;
+    const data = await core.createNamespacedConfigMap(namespace, req.body);
     res.json(data.body);
   },
-  'POST /api/v1/namespace/:namespace/config-maps': async (
-    req: any,
-    res: any,
+  'GET /api/v1/namespace/:namespace/config-maps/:name': async (
+    req: Request<{ namespace: string; name: string }>,
+    res: Response<V1ConfigMap>,
   ) => {
-    const data = await core.createNamespacedConfigMap(
-      req.params.namespace,
-      req.body,
-    );
+    const { name, namespace } = req.params;
+    const data = await core.readNamespacedConfigMap(name, namespace);
     res.json(data.body);
   },
   'PUT /api/v1/namespace/:namespace/config-maps/:name': async (
-    req: any,
-    res: any,
+    req: Request<{ namespace: string; name: string }>,
+    res: Response<void>,
   ) => {
-    await core.replaceNamespacedConfigMap(
-      req.params.name,
-      req.params.namespace,
-      req.body,
-    );
-    res.json();
+    const { name, namespace } = req.params;
+    await core.replaceNamespacedConfigMap(name, namespace, req.body);
+    res.status(204).end();
   },
   'DELETE /api/v1/namespace/:namespace/config-maps/:name': async (
-    req: any,
-    res: any,
+    req: Request<{ namespace: string; name: string }>,
+    res: Response<void>,
   ) => {
-    await core.deleteNamespacedConfigMap(req.params.name, req.params.namespace);
-    res.json();
+    const { name, namespace } = req.params;
+    await core.deleteNamespacedConfigMap(name, namespace);
+    res.status(204).end();
   },
 };

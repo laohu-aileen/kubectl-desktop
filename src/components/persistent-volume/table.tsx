@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1PersistentVolume } from '@kubernetes/client-node';
-import { listPersistentVolume } from '@/services';
+import { persistentVolume } from '@/services';
 import { TagColumn } from '../basic';
 import { v1 as uuid } from 'uuid';
 
@@ -72,7 +72,7 @@ export const PersistentVolumeTable = () => {
       polling={3000}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async () => {
-        const data = await listPersistentVolume();
+        const data = await persistentVolume.list();
         return { data, success: true };
       }}
     />

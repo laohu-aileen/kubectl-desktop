@@ -1,5 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1PersistentVolume } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listPersistentVolume = (): Promise<V1PersistentVolume[]> =>
-  request('persistent-volumes', { method: 'GET' });
+const url = 'persistent-volumes';
+export const persistentVolume = new RESTFul<V1PersistentVolume>(url);

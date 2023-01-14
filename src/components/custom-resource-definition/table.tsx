@@ -4,7 +4,7 @@ import {
   V1CustomResourceDefinition,
   V1CustomResourceDefinitionVersion,
 } from '@kubernetes/client-node';
-import { listCustomResourceDefinition } from '@/services';
+import { customResourceDefinition } from '@/services';
 import { v1 as uuid } from 'uuid';
 import { TagColumn } from '../basic';
 
@@ -75,7 +75,7 @@ export const CustomResourceDefinitionTable = () => {
       polling={3000}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async () => {
-        const data = await listCustomResourceDefinition();
+        const data = await customResourceDefinition.list();
         return { data, success: true };
       }}
     />

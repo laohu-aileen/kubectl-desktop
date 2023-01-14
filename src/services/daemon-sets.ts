@@ -1,9 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1DaemonSet } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedDaemonSet = (
-  namespace: string,
-): Promise<V1DaemonSet[]> =>
-  request(`namespace/${namespace}/daemon-sets`, {
-    method: 'GET',
-  });
+export const namespacedDaemonSet = (namespace: string) =>
+  new RESTFul<V1DaemonSet>(`namespace/${namespace}/daemon-sets`);

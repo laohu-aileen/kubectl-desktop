@@ -1,9 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1CronJob } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedCronJob = (
-  namespace: string,
-): Promise<V1CronJob[]> =>
-  request(`namespace/${namespace}/cron-jobs`, {
-    method: 'GET',
-  });
+export const namespacedCronJob = (namespace: string) =>
+  new RESTFul<V1CronJob>(`namespace/${namespace}/cron-jobs`);

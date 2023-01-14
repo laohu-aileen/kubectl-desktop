@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1Container, V1ContainerStatus, V1Pod } from '@kubernetes/client-node';
-import { listNamespacedPod, listNamespaceLabels } from '@/services';
+import { namespacedPod, namespaceLabels } from '@/services';
 import { v1 as uuid } from 'uuid';
 import { TagColumn } from '../basic';
 
@@ -59,7 +59,7 @@ export const PodTable = () => {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: listNamespaceLabels,
+      request: namespaceLabels,
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -110,7 +110,7 @@ export const PodTable = () => {
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async (params) => {
         if (!params.metadata?.namespace) return { success: true, data: [] };
-        const data = await listNamespacedPod(params.metadata.namespace);
+        const data = await namespacedPod(params.metadata.namespace).list();
         if (!params.keyword) return { success: true, data };
         const keyword = params.keyword;
         return {

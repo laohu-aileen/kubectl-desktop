@@ -1,9 +1,7 @@
 import {
-  deleteNamespacedConfigMap,
-  deleteNamespacedSecret,
-  listNamespacedConfigMap,
-  listNamespacedSecret,
-  listNamespaceLabels,
+  namespacedConfigMap,
+  namespacedSecret,
+  namespaceLabels,
 } from '@/services';
 import { PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
@@ -39,7 +37,7 @@ export const ConfigTable = () => {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: listNamespaceLabels,
+      request: namespaceLabels,
       initialValue: ns,
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -94,16 +92,11 @@ export const ConfigTable = () => {
               onConfirm={async () => {
                 if (!metadata?.name) return;
                 if (!metadata?.namespace) return;
+                const { name, namespace } = metadata;
                 if (secretMode) {
-                  await deleteNamespacedSecret(
-                    metadata?.name,
-                    metadata?.namespace,
-                  );
+                  await namespacedSecret(namespace).delete(name);
                 } else {
-                  await deleteNamespacedConfigMap(
-                    metadata?.name,
-                    metadata?.namespace,
-                  );
+                  await namespacedConfigMap(namespace).delete(name);
                 }
                 ref.current?.reload();
                 message.success('操作成功');
@@ -186,11 +179,11 @@ export const ConfigTable = () => {
         let data: Config[] = [];
         switch (activeKey) {
           case 'configMap': {
-            data = await listNamespacedConfigMap(namespace);
+            data = await namespacedConfigMap(namespace).list();
             break;
           }
           case 'secret': {
-            data = await listNamespacedSecret(namespace);
+            data = await namespacedSecret(namespace).list();
             break;
           }
         }

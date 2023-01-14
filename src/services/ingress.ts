@@ -1,9 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1Ingress } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedIngress = (
-  namespace: string,
-): Promise<V1Ingress[]> =>
-  request(`namespace/${namespace}/ingress`, {
-    method: 'GET',
-  });
+export const namespacedIngress = (namespace: string) =>
+  new RESTFul<V1Ingress>(`namespace/${namespace}/ingress`);

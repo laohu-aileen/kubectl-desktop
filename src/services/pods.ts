@@ -1,7 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1Pod } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedPod = (namespace: string): Promise<V1Pod[]> =>
-  request(`namespace/${namespace}/pods`, {
-    method: 'GET',
-  });
+export const namespacedPod = (namespace: string) =>
+  new RESTFul<V1Pod>(`namespace/${namespace}/pods`);

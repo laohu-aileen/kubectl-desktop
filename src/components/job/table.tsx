@@ -1,8 +1,4 @@
-import {
-  listNamespacedCronJob,
-  listNamespacedJob,
-  listNamespaceLabels,
-} from '@/services';
+import { namespacedCronJob, namespacedJob, namespaceLabels } from '@/services';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { V1Container, V1CronJob, V1Job } from '@kubernetes/client-node';
 import { Button } from 'antd';
@@ -50,7 +46,7 @@ export const JobTable = () => {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: listNamespaceLabels,
+      request: namespaceLabels,
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -123,8 +119,7 @@ export const JobTable = () => {
         density: false,
       }}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
-      request={async (params, sort, filter) => {
-        console.log({ params, sort, filter });
+      request={async (params) => {
         if (!params.metadata?.namespace) {
           return { success: true, data: [] };
         }
@@ -132,11 +127,11 @@ export const JobTable = () => {
         let data: Job[] = [];
         switch (activeKey) {
           case 'job': {
-            data = await listNamespacedJob(namespace);
+            data = await namespacedJob(namespace).list();
             break;
           }
           case 'cron-job': {
-            data = await listNamespacedCronJob(namespace);
+            data = await namespacedCronJob(namespace).list();
             break;
           }
         }

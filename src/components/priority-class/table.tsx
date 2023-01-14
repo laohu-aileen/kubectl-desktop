@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1PriorityClass } from '@kubernetes/client-node';
-import { listPriorityClass } from '@/services';
+import { priorityClass } from '@/services';
 import { v1 as uuid } from 'uuid';
 
 export const PriorityClassTable = () => {
@@ -42,7 +42,7 @@ export const PriorityClassTable = () => {
       polling={3000}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async () => {
-        const data = await listPriorityClass();
+        const data = await priorityClass.list();
         return { data, success: true };
       }}
     />

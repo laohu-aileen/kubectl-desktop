@@ -1,9 +1,7 @@
+import { RESTFul } from '@/utils/restful';
 import { V1CustomResourceDefinition } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listCustomResourceDefinition = (): Promise<
-  V1CustomResourceDefinition[]
-> =>
-  request('custom-resource-definitions', {
-    method: 'GET',
-  });
+const url = 'custom-resource-definitions';
+export const customResourceDefinition = new RESTFul<V1CustomResourceDefinition>(
+  url,
+);

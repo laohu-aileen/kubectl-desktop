@@ -1,30 +1,23 @@
+import { RESTFul } from '@/utils/restful';
 import { V1Namespace } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespace = (): Promise<V1Namespace[]> =>
-  request('namespaces', { method: 'GET' });
+/**
+ * 命名空间资源
+ */
+const url = 'namespaces';
+export const namespace = new RESTFul<V1Namespace>(url);
 
-export const listNamespaceLabels = async (): Promise<
+/**
+ * 生成标签
+ *
+ * @returns
+ */
+export const namespaceLabels = async (): Promise<
   { label?: string; value?: string }[]
 > => {
-  const data = await listNamespace();
+  const data = await namespace.list();
   return data.map((item) => ({
     label: item.metadata?.name,
     value: item.metadata?.name,
   }));
 };
-
-export const readNamespace = (name: string): Promise<V1Namespace> =>
-  request(`namespaces/${name}`, { method: 'GET' });
-
-export const createNamespace = (data: V1Namespace): Promise<V1Namespace> =>
-  request(`namespaces`, { method: 'POST', data });
-
-export const replaceNamespace = (
-  name: string,
-  data: V1Namespace,
-): Promise<V1Namespace> =>
-  request(`namespaces/${name}`, { method: 'PUT', data });
-
-export const deleteNamespace = (name: string): Promise<V1Namespace> =>
-  request(`namespaces/${name}`, { method: 'DELETE' });

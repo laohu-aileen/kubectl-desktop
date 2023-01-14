@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1ClusterRoleBinding, V1Subject } from '@kubernetes/client-node';
-import { listClusterRoleBinding } from '@/services';
+import { clusterRoleBinding } from '@/services';
 import { v1 as uuid } from 'uuid';
 import { TagColumn } from '../basic';
 
@@ -42,7 +42,7 @@ export const ClusterRoleBindingTable = () => {
       polling={3000}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async () => {
-        const data = await listClusterRoleBinding();
+        const data = await clusterRoleBinding.list();
         return { data, success: true };
       }}
     />

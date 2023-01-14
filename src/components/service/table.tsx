@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1Service, V1ServicePort } from '@kubernetes/client-node';
-import { listNamespacedService, listNamespaceLabels } from '@/services';
+import { namespacedService, namespaceLabels } from '@/services';
 import { v1 as uuid } from 'uuid';
 import { TagColumn } from '../basic';
 
@@ -57,7 +57,7 @@ export const ServiceTable = () => {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: listNamespaceLabels,
+      request: namespaceLabels,
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -100,7 +100,7 @@ export const ServiceTable = () => {
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async (params) => {
         if (!params.metadata?.namespace) return { success: true, data: [] };
-        const data = await listNamespacedService(params.metadata.namespace);
+        const data = await namespacedService(params.metadata.namespace).list();
         if (!params.keyword) return { success: true, data };
         const keyword = params.keyword;
         return {

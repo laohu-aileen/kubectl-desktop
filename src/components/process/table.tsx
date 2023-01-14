@@ -1,8 +1,8 @@
 import {
-  listNamespacedDaemonSet,
-  listNamespacedDeployment,
-  listNamespacedStatefulSet,
-  listNamespaceLabels,
+  namespacedDeployment,
+  namespacedDaemonSet,
+  namespacedStatefulSet,
+  namespaceLabels,
 } from '@/services';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import {
@@ -56,7 +56,7 @@ export const WorkloadProcessTable = () => {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: listNamespaceLabels,
+      request: namespaceLabels,
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -141,15 +141,15 @@ export const WorkloadProcessTable = () => {
         let data: Workload[] = [];
         switch (activeKey) {
           case 'deployment': {
-            data = await listNamespacedDeployment(namespace);
+            data = await namespacedDeployment(namespace).list();
             break;
           }
           case 'stateful-set': {
-            data = await listNamespacedStatefulSet(namespace);
+            data = await namespacedStatefulSet(namespace).list();
             break;
           }
           case 'daemon-set': {
-            data = await listNamespacedDaemonSet(namespace);
+            data = await namespacedDaemonSet(namespace).list();
             break;
           }
         }

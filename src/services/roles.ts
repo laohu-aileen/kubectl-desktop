@@ -1,7 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1Role } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedRole = (namespace: string): Promise<V1Role[]> =>
-  request(`namespace/${namespace}/roles`, {
-    method: 'GET',
-  });
+export const namespacedRole = (namespace: string) =>
+  new RESTFul<V1Role>(`namespace/${namespace}/roles`);

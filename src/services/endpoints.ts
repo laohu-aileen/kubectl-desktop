@@ -1,9 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1Endpoints } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedEndpoints = (
-  namespace: string,
-): Promise<V1Endpoints[]> =>
-  request(`namespace/${namespace}/endpoints`, {
-    method: 'GET',
-  });
+export const namespacedEndpoints = (namespace: string) =>
+  new RESTFul<V1Endpoints>(`namespace/${namespace}/endpoints`);

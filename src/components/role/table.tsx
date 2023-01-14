@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1Role } from '@kubernetes/client-node';
-import { listNamespacedRole, listNamespaceLabels } from '@/services';
+import { namespacedRole, namespaceLabels } from '@/services';
 import { v1 as uuid } from 'uuid';
 
 export const RoleTable = () => {
@@ -24,7 +24,7 @@ export const RoleTable = () => {
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: listNamespaceLabels,
+      request: namespaceLabels,
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -67,7 +67,7 @@ export const RoleTable = () => {
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async (params) => {
         if (!params.metadata?.namespace) return { success: true, data: [] };
-        const data = await listNamespacedRole(params.metadata.namespace);
+        const data = await namespacedRole(params.metadata.namespace).list();
         if (!params.keyword) return { success: true, data };
         const keyword = params.keyword;
         return {

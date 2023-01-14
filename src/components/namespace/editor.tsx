@@ -8,7 +8,7 @@ import {
 } from '@ant-design/pro-components';
 import { useState } from 'react';
 import { V1Namespace } from '@kubernetes/client-node';
-import { createNamespace, readNamespace, replaceNamespace } from '@/services';
+import { namespace } from '@/services';
 
 interface FormData {
   name: string;
@@ -68,9 +68,9 @@ export const NamespaceModalForm = ({
         delete data.metadata.resourceVersion;
         delete data.metadata.managedFields;
         if (initialValues) {
-          await replaceNamespace(values.name, data);
+          await namespace.replace(values.name, data);
         } else {
-          await createNamespace(data);
+          await namespace.create(data);
         }
         if (afterSubmit) return afterSubmit();
         message.success('保存成功');
@@ -83,7 +83,7 @@ export const NamespaceModalForm = ({
             labels: [],
           };
         }
-        const data = await readNamespace(name);
+        const data = await namespace.read(name);
         if (data.metadata?.labels) {
           delete data.metadata.labels['kubernetes.io/metadata.name'];
         }

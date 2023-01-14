@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { V1ClusterRole } from '@kubernetes/client-node';
-import { listClusterRole } from '@/services';
+import { clusterRole } from '@/services';
 import { v1 as uuid } from 'uuid';
 
 export const ClusterRoleTable = () => {
@@ -30,7 +30,7 @@ export const ClusterRoleTable = () => {
       polling={3000}
       rowKey={({ metadata }) => metadata?.uid || uuid()}
       request={async () => {
-        const data = await listClusterRole();
+        const data = await clusterRole.list();
         return { data, success: true };
       }}
     />

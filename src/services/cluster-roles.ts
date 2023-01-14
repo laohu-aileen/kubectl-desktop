@@ -1,5 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1ClusterRole } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listClusterRole = (): Promise<V1ClusterRole[]> =>
-  request('cluster-roles', { method: 'GET' });
+const url = 'cluster-roles';
+export const clusterRole = new RESTFul<V1ClusterRole>(url);

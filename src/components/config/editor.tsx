@@ -1,11 +1,4 @@
-import {
-  createNamespacedConfigMap,
-  createNamespacedSecret,
-  readNamespacedConfigMap,
-  readNamespacedSecret,
-  replaceNamespacedConfigMap,
-  replaceNamespacedSecret,
-} from '@/services';
+import { namespacedConfigMap, namespacedSecret } from '@/services';
 import {
   DrawerForm,
   ProFormText,
@@ -87,9 +80,9 @@ const submitConfigMap = async (
     delete value.metadata?.creationTimestamp;
     delete value.metadata?.resourceVersion;
     delete value.metadata?.managedFields;
-    await replaceNamespacedConfigMap(form.name, namespace, value);
+    await namespacedConfigMap(namespace).replace(form.name, value);
   } else {
-    await createNamespacedConfigMap(namespace, value);
+    await namespacedConfigMap(namespace).create(value);
   }
 };
 
@@ -128,9 +121,9 @@ const submitSecret = async (
     delete value.metadata?.creationTimestamp;
     delete value.metadata?.resourceVersion;
     delete value.metadata?.managedFields;
-    await replaceNamespacedSecret(form.name, namespace, value);
+    await namespacedSecret(namespace).replace(form.name, value);
   } else {
-    await createNamespacedSecret(namespace, value);
+    await namespacedSecret(namespace).create(value);
   }
 };
 
@@ -145,7 +138,7 @@ const requestConfigMapData = async (
   name: string,
   namespace: string,
 ): Promise<ConfigEditorData> => {
-  const statement = await readNamespacedConfigMap(name, namespace);
+  const statement = await namespacedConfigMap(namespace).read(name);
   const data = statement.data || {};
   return {
     statement,
@@ -172,7 +165,7 @@ const requestSecretData = async (
   name: string,
   namespace: string,
 ): Promise<ConfigEditorData> => {
-  const statement = await readNamespacedSecret(name, namespace);
+  const statement = await namespacedSecret(namespace).read(name);
   let encrypt: 'data' | 'stringData' = 'data';
   if (statement.stringData) encrypt = 'stringData';
   if (statement.data) encrypt = 'data';

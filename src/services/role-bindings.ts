@@ -1,9 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1RoleBinding } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listNamespacedRoleBinding = (
-  namespace: string,
-): Promise<V1RoleBinding[]> =>
-  request(`namespace/${namespace}/role-bindings`, {
-    method: 'GET',
-  });
+export const namespacedRoleBinding = (namespace: string) =>
+  new RESTFul<V1RoleBinding>(`namespace/${namespace}/role-bindings`);
