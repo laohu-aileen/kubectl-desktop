@@ -122,16 +122,6 @@ export default <Route[]>[
             path: '/cluster/access/roles',
             component: './cluster/role',
           },
-          {
-            name: '集群角色绑定',
-            path: '/cluster/access/cluster-role-bindings',
-            component: './cluster/cluster-role-binding',
-          },
-          {
-            name: '角色绑定',
-            path: '/cluster/access/role-bindings',
-            component: './cluster/role-binding',
-          },
         ],
       },
       {
