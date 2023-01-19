@@ -1,4 +1,5 @@
 import { request } from '@umijs/max';
+import lodash from 'lodash';
 
 /**
  * RESTFul标准API
@@ -10,11 +11,17 @@ export class RESTFul<T> {
   private path: string;
 
   /**
+   * 默认对象
+   */
+  private initialValue?: T;
+
+  /**
    * 构造方法
    * @param path
    */
-  constructor(path?: string) {
+  constructor(path?: string, initialValue?: T) {
     this.path = path || '';
+    this.initialValue = initialValue;
   }
 
   /**
@@ -26,6 +33,18 @@ export class RESTFul<T> {
   protected buildURL(id?: string | number): string {
     if (!id) return this.path;
     return `${this.path}/${id}`;
+  }
+
+  /**
+   * 生成请求数据
+   *
+   * @param data
+   * @returns
+   */
+  protected buildBody(data: T) {
+    if (!this.initialValue) return data;
+    const body = lodash.cloneDeep(this.initialValue);
+    return lodash.merge(body, data);
   }
 
   /**
@@ -58,7 +77,10 @@ export class RESTFul<T> {
    */
   public create(data: T): Promise<T> {
     const url = this.buildURL();
-    return request(url, { method: 'POST', data });
+    return request(url, {
+      method: 'POST',
+      data: this.buildBody(data),
+    });
   }
 
   /**
@@ -71,7 +93,10 @@ export class RESTFul<T> {
    */
   public async replace(id: string | number, data: T): Promise<void> {
     const url = this.buildURL(id);
-    await request(url, { method: 'PUT', data });
+    await request(url, {
+      method: 'PUT',
+      data: this.buildBody(data),
+    });
   }
 
   /**

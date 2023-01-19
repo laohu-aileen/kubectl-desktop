@@ -7,7 +7,12 @@ export default {
     _: Request,
     res: Response<V1ClusterRole[]>,
   ) => {
-    const data = await rabc.listClusterRole();
-    res.json(data.body.items);
+    try {
+      const data = await rabc.listClusterRole();
+      res.json(data.body.items);
+    } catch (e: any) {
+      res.status(500);
+      res.json({ message: e.message } as any);
+    }
   },
 };

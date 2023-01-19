@@ -1,5 +1,5 @@
+import { RESTFul } from '@/utils/restful';
 import { V1StorageClass } from '@kubernetes/client-node';
-import { request } from '@umijs/max';
 
-export const listStorageClass = (): Promise<V1StorageClass[]> =>
-  request('storage-classes', { method: 'GET' });
+const url = 'storage-classes';
+export const storageClass = new RESTFul<V1StorageClass>(url);

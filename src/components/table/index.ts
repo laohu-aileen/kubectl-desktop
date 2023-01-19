@@ -1,2 +1,2 @@
 export * from './definition';
-export * from './cluster';
+export * from './table';

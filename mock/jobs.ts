@@ -11,7 +11,7 @@ export default {
     const data = await batch.listNamespacedJob(namespace);
     res.json(data.body.items);
   },
-  'POST /api/v1/namespace/:namespace/deployments': async (
+  'POST /api/v1/namespace/:namespace/jobs': async (
     req: Request<{ namespace: string }>,
     res: Response<V1Job>,
   ) => {
