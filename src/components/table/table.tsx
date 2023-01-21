@@ -10,9 +10,9 @@ import { ListToolBarMenu } from '@ant-design/pro-table/es/components/ListToolBar
 import { DrawerFrom, DrawerFromProps } from '@/components/form';
 import { Button, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { namespaceLabels } from '@/services';
+import { namespace } from '@/services';
 import { v1 as uuid } from 'uuid';
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { BasicTableData } from './definition';
 import lodash from 'lodash';
 import { useEffect } from 'react';
@@ -22,6 +22,7 @@ import { useEffect } from 'react';
  */
 export interface ProTableProps<T> extends TableProps<T, T, ValueType> {
   api?: RESTFul<T> | ((namespace: string) => RESTFul<T>);
+  itemActionsRender?: (record: T, actions: ReactNode[]) => ReactNode[];
   formProps?: DrawerFromProps<T>;
 }
 
@@ -34,6 +35,7 @@ export interface ProTableProps<T> extends TableProps<T, T, ValueType> {
 export const ProTable = <T extends BasicTableData>({
   api,
   formProps,
+  itemActionsRender,
   ...props
 }: ProTableProps<T>) => {
   const actionRef = useRef<ActionType>();
@@ -88,15 +90,26 @@ export const ProTable = <T extends BasicTableData>({
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-      request: namespaceLabels,
+
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
+      request: async () => {
+        const data = await namespace.list();
+        return data.map((item) => ({
+          label: item.metadata?.name,
+          value: item.metadata?.name,
+        }));
+      },
     });
   }
 
-  // 表单元件
+  // 渲染操作蓝
   if (formProps) {
+    const initialValues = lodash.merge(
+      lodash.cloneDeep(formProps.initialValues || {}),
+      { metadata: { namespace: activeNamespace } } as T,
+    );
     tableProps.toolbar?.actions?.push(
       <DrawerFrom<T>
         key="create"
@@ -109,6 +122,7 @@ export const ProTable = <T extends BasicTableData>({
         }
         {...formProps}
         api={rest}
+        initialValues={initialValues}
         onFinish={async () => {
           message.success('保存成功');
           actionRef.current?.reload();
@@ -116,43 +130,54 @@ export const ProTable = <T extends BasicTableData>({
         }}
       />,
     );
+  }
+
+  // 渲染数据记录操作
+  if (itemActionsRender || formProps) {
     tableProps.columns?.push({
       title: '操作',
       valueType: 'option',
       align: 'right',
-      render: (_, record) => (
-        <div style={{ textAlign: 'right' }}>
-          <DrawerFrom<T>
-            title={props.headerTitle}
-            trigger={<Button type="link">编辑</Button>}
-            {...formProps}
-            key="update"
-            api={rest}
-            initialValues={record}
-            onFinish={async () => {
-              message.success('保存成功');
-              actionRef.current?.reload();
-              return true;
-            }}
-          />
-          <Popconfirm
-            key="remove"
-            title="警告"
-            description="改操作不可撤销,你确定执行操作?"
-            onConfirm={async () => {
-              if (!record.metadata?.name) {
-                actionRef.current?.reload();
-                return;
-              }
-              await rest?.delete(record.metadata.name);
-              message.success('执行成功');
-              actionRef.current?.reload();
-            }}
-          >
-            <Button type="link">删除</Button>
-          </Popconfirm>
-        </div>
-      ),
+      render: (_, record) => {
+        const actions: ReactNode[] = formProps
+          ? [
+              <DrawerFrom<T>
+                title={props.headerTitle}
+                trigger={<Button type="link">编辑</Button>}
+                {...formProps}
+                key="update"
+                api={rest}
+                initialValues={record}
+                onFinish={async () => {
+                  message.success('保存成功');
+                  actionRef.current?.reload();
+                  return true;
+                }}
+              />,
+              <Popconfirm
+                key="remove"
+                title="警告"
+                description="改操作不可撤销,你确定执行操作?"
+                onConfirm={async () => {
+                  if (!record.metadata?.name) {
+                    actionRef.current?.reload();
+                    return;
+                  }
+                  await rest?.delete(record.metadata.name);
+                  message.success('执行成功');
+                  actionRef.current?.reload();
+                }}
+              >
+                <Button type="link">删除</Button>
+              </Popconfirm>,
+            ]
+          : [];
+        return (
+          <div style={{ textAlign: 'right' }}>
+            {itemActionsRender ? itemActionsRender(record, actions) : actions}
+          </div>
+        );
+      },
     });
   }
 
@@ -164,15 +189,28 @@ export const ProTable = <T extends BasicTableData>({
  * 子表格输入参数
  */
 export interface ProMenuTableItem<T> extends ProTableProps<T> {
-  key: React.Key;
+  key?: React.Key;
 }
 
 /**
  * 菜单化表格参数
  */
 export interface ProMenuTableProps<T> {
+  /**
+   * 子菜单表格参数
+   */
   menus: ProMenuTableItem<T>[];
+  /**
+   * 子菜单表格公共参数
+   */
+  commonMenuProps?: ProMenuTableItem<T>;
+  /**
+   * 公共前置字段
+   */
   prevColumns?: ProColumns<T, ValueType>[];
+  /**
+   * 公共后置字段
+   */
   nextColumns?: ProColumns<T, ValueType>[];
 }
 
@@ -181,13 +219,18 @@ export interface ProMenuTableProps<T> {
  */
 export const ProMenuTable = <T extends BasicTableData>({
   menus,
+  commonMenuProps,
   prevColumns,
   nextColumns,
 }: ProMenuTableProps<T>) => {
   const [activeKey, setActiveKey] = useState<React.Key>();
 
-  // 定义变量
-  const tableProps: ProTableProps<T> = {};
+  // 定义表格参数
+  const tableProps: ProTableProps<T> = commonMenuProps
+    ? lodash.cloneDeep(commonMenuProps)
+    : {};
+
+  // 操作菜单参数
   const toolbarMenu: ListToolBarMenu = {
     type: 'tab',
     activeKey,
@@ -204,11 +247,11 @@ export const ProMenuTable = <T extends BasicTableData>({
       toolbarMenu.activeKey = key;
     }
     toolbarMenu.items?.push({
-      key,
+      key: key || uuid(),
       label: headerTitle,
     });
     if (key === toolbarMenu.activeKey) {
-      Object.assign(tableProps, props);
+      lodash.merge(tableProps, props);
     }
   }
 

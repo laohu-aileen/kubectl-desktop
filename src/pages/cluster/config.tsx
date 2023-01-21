@@ -1,4 +1,4 @@
-import { MapInput } from '@/components/input';
+import { ProFormMap } from '@/components/input';
 import { ProMenuTable } from '@/components/table';
 import { namespacedConfigMap, namespacedSecret } from '@/services';
 import {
@@ -50,9 +50,12 @@ export default () => (
                     },
                   ]}
                 />,
-                <ProForm.Item required key="data" name="data" label="数据">
-                  <MapInput />
-                </ProForm.Item>,
+                <ProFormMap
+                  required
+                  key="data"
+                  name={['data']}
+                  label={'数据'}
+                />,
               ],
             },
           ],
@@ -116,7 +119,7 @@ export default () => (
                     ]}
                   />
                 </ProForm.Group>,
-                <ProForm.Item
+                <ProFormMap
                   required
                   key="data"
                   name="data"
@@ -141,9 +144,7 @@ export default () => (
                     }
                     return res;
                   }}
-                >
-                  <MapInput />
-                </ProForm.Item>,
+                />,
               ],
             },
           ],

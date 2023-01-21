@@ -3,18 +3,18 @@ import {
   DrawerForm as ProDrawerForm,
   DrawerFormProps as ProDrawerFormProps,
   ProFormText,
-  ProForm,
 } from '@ant-design/pro-components';
 import { message, Segmented } from 'antd';
 import { ReactNode, useState } from 'react';
-import { MapInput } from '../input';
 import { BasicFormData } from './definition';
+import { ProFormMap } from '../input';
 
 /**
  * 表单参数
  */
 export interface DrawerFromProps<T> extends ProDrawerFormProps<T> {
   api?: RESTFul<T>;
+  defaultSection?: string;
   columns?: {
     title: string;
     items: ReactNode[];
@@ -26,10 +26,11 @@ export interface DrawerFromProps<T> extends ProDrawerFormProps<T> {
  */
 export const DrawerFrom = <T extends BasicFormData>({
   api,
+  defaultSection,
   columns,
   ...props
 }: DrawerFromProps<T>) => {
-  const [section, setSection] = useState<string>('元数据');
+  const [section, setSection] = useState<string>(defaultSection || '元数据');
   const sectionOptions: string[] = ['元数据'];
   const formItems: ReactNode[] = [];
 
@@ -42,20 +43,16 @@ export const DrawerFrom = <T extends BasicFormData>({
         extra="长度为 1 ~ 63 个字符，只能包含数字、小写字母和中划线（-），且首尾只能是字母或数字"
         required
       />
-      <ProForm.Item
+      <ProFormMap
         name={['metadata', 'annotations']}
         label="注解"
         tooltip="metadata.annotations"
-      >
-        <MapInput />
-      </ProForm.Item>
-      <ProForm.Item
+      />
+      <ProFormMap
         name={['metadata', 'labels']}
         label="标签"
         tooltip="metadata.labels"
-      >
-        <MapInput />
-      </ProForm.Item>
+      />
     </div>,
   );
 

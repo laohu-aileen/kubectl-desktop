@@ -2,11 +2,13 @@ import { CloseCircleFilled, EditFilled, PlusOutlined } from '@ant-design/icons';
 import { Button, Input, InputProps, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import lodash from 'lodash';
+import { ProForm, ProFormItemProps } from '@ant-design/pro-components';
+import { useRef } from 'react';
 
 /**
  * 字典对象
  */
-interface ObjectMap {
+export interface ObjectMap {
   [key: string]: string;
 }
 
@@ -19,6 +21,7 @@ export interface MapInputProps {
 
 export const MapInput = (props: MapInputProps) => {
   // 表单数据定义
+  const submit = useRef<any>();
   const [list, setList] = useState<
     {
       key: string;
@@ -35,16 +38,14 @@ export const MapInput = (props: MapInputProps) => {
 
   // 外部数值变更
   useEffect(() => {
-    const value = props.value || {};
-    for (const key of Object.keys(value)) {
-      const index = list.findIndex((item) => item.key === key);
-      if (index < 0) {
-        list.push({ key, value: value[key] });
-      } else {
-        list[index].value = value[key];
-      }
-    }
-    setList([...list]);
+    const { value } = props;
+    if (value === submit.current) return;
+    if (!value) return setList([]);
+    const list = Object.keys(value).map((key) => ({
+      key,
+      value: value[key] || '',
+    }));
+    setList(list);
   }, [props.value]);
 
   // 表单参数解析
@@ -68,6 +69,7 @@ export const MapInput = (props: MapInputProps) => {
       if (lodash.has(data, item.key)) continue;
       data[item.key] = item.value;
     }
+    submit.current = data;
     props.onChange(data);
   };
 
@@ -162,3 +164,15 @@ export const MapInput = (props: MapInputProps) => {
     </div>
   );
 };
+
+/**
+ * 字典表单
+ *
+ * @param props
+ * @returns
+ */
+export const ProFormMap = (props: ProFormItemProps) => (
+  <ProForm.Item {...props}>
+    <MapInput />
+  </ProForm.Item>
+);
