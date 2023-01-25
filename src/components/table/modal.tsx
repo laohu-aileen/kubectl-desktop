@@ -110,7 +110,7 @@ export const ModalTable = <T extends BasicTableData>({
  */
 export interface ModalMenuTableProps<T> extends ProMenuTableProps<T> {
   trigger?: JSX.Element;
-  actionRef?: MutableRefObject<ModalAction | undefined>;
+  modalRef?: MutableRefObject<ModalAction | undefined>;
   width?: number | string;
 }
 
@@ -121,15 +121,15 @@ export interface ModalMenuTableProps<T> extends ProMenuTableProps<T> {
  */
 export const ModalMenuTable = <T extends BasicTableData>({
   trigger,
-  actionRef,
+  modalRef,
   width,
   menus,
   ...props
 }: ModalMenuTableProps<T>) => {
   // 窗口开关管理
   const [open, setOpen] = useState<boolean>(false);
-  if (actionRef) {
-    actionRef.current = {
+  if (modalRef) {
+    modalRef.current = {
       open: () => setOpen(true),
       close: () => setOpen(false),
     };

@@ -43,7 +43,7 @@ export interface WorkloadSelectModalProps {
  * @returns
  */
 export const WorkloadSelectModal = (props: WorkloadSelectModalProps) => {
-  const actionRef = useRef<ModalAction>();
+  const modalRef = useRef<ModalAction>();
   const trigger = props.trigger || (
     <Button icon={<ImportOutlined />} type="link">
       从现有负载资源中导入标签
@@ -52,7 +52,7 @@ export const WorkloadSelectModal = (props: WorkloadSelectModalProps) => {
   return (
     <ModalMenuTable<WorkloadType>
       width={1000}
-      actionRef={actionRef}
+      modalRef={modalRef}
       trigger={trigger}
       commonMenuProps={{
         options: {
@@ -68,7 +68,7 @@ export const WorkloadSelectModal = (props: WorkloadSelectModalProps) => {
             <a
               key="selected"
               onClick={() => {
-                actionRef.current?.close();
+                modalRef.current?.close();
                 if (!props.onSelect) return;
                 props.onSelect(record);
               }}

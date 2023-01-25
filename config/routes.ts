@@ -8,7 +8,7 @@ export default <Route[]>[
   {
     name: '主页',
     path: '/home',
-    component: './Home',
+    component: './home',
   },
   {
     name: '集群',
@@ -17,17 +17,17 @@ export default <Route[]>[
       {
         name: '集群信息',
         path: '/cluster/info',
-        component: './cluster/info',
+        component: './info',
       },
       {
         name: '节点管理',
-        path: '/cluster/nodes',
-        component: './cluster/node',
+        path: '/cluster/node',
+        component: './node',
       },
       {
         name: '命名空间',
-        path: '/cluster/namespaces',
-        component: './cluster/namespace',
+        path: '/cluster/namespace',
+        component: './namespace',
       },
       {
         name: '工作负载',
@@ -36,17 +36,21 @@ export default <Route[]>[
           {
             name: '进程',
             path: '/cluster/workloads/process',
-            component: './cluster/process',
+            component: './process',
           },
           {
             name: '任务',
-            path: '/cluster/workloads/jobs',
-            component: './cluster/job',
+            path: '/cluster/workloads/job',
+            component: './job',
           },
           {
             name: '容器',
-            path: '/cluster/workloads/pods',
-            component: './cluster/pod',
+            path: '/cluster/workloads/pod',
+            component: './pod',
+          },
+          {
+            path: '/cluster/workloads/pod/:ns/:id',
+            component: './pod/info',
           },
         ],
       },
@@ -56,13 +60,13 @@ export default <Route[]>[
         routes: [
           {
             name: '服务',
-            path: '/cluster/network/services',
-            component: './cluster/service',
+            path: '/cluster/network/servic',
+            component: './service',
           },
           {
             name: '路由',
             path: '/cluster/network/ingress',
-            component: './cluster/ingress',
+            component: './ingress',
           },
         ],
       },
@@ -72,18 +76,18 @@ export default <Route[]>[
         routes: [
           {
             name: '存储声明',
-            path: '/cluster/volume/persistent-volume-claims',
-            component: './cluster/persistent-volume-claim',
+            path: '/cluster/volume/pvc',
+            component: './pvc',
           },
           {
             name: '存储卷',
-            path: '/cluster/volume/persistent-volume',
-            component: './cluster/persistent-volume',
+            path: '/cluster/volume/pv',
+            component: './pv',
           },
           {
             name: '存储类',
-            path: '/cluster/volume/storage-classes',
-            component: './cluster/storage-class',
+            path: '/cluster/volume/storage-class',
+            component: './storage-class',
           },
         ],
       },
@@ -94,12 +98,12 @@ export default <Route[]>[
           {
             name: '环境配置',
             path: '/cluster/config/config',
-            component: './cluster/config',
+            component: './config',
           },
           {
             name: '权重策略',
-            path: '/cluster/config/priority-classes',
-            component: './cluster/priority-class',
+            path: '/cluster/config/priority-class',
+            component: './priority-class',
           },
         ],
       },
@@ -109,30 +113,30 @@ export default <Route[]>[
         routes: [
           {
             name: '服务账户',
-            path: '/cluster/access/service-accounts',
-            component: './cluster/service-account',
+            path: '/cluster/access/service-account',
+            component: './service-account',
           },
           {
             name: '集群角色',
-            path: '/cluster/access/cluster-roles',
-            component: './cluster/cluster-role',
+            path: '/cluster/access/cluster-role',
+            component: './cluster-role',
           },
           {
             name: '角色',
-            path: '/cluster/access/roles',
-            component: './cluster/role',
+            path: '/cluster/access/role',
+            component: './role',
           },
         ],
       },
       {
         name: '事件',
-        path: '/cluster/events',
-        component: './cluster/event',
+        path: '/cluster/event',
+        component: './event',
       },
       {
         name: '扩展',
-        path: '/cluster/custom-resource-definitions',
-        component: './cluster/custom-resource-definition',
+        path: '/cluster/crd',
+        component: './crd',
       },
     ],
   },

@@ -24,6 +24,11 @@ export interface ProTableProps<T> extends TableProps<T, T, ValueType> {
   api?: RESTFul<T> | ((namespace: string) => RESTFul<T>);
   itemActionsRender?: (record: T, actions: ReactNode[]) => ReactNode[];
   formProps?: DrawerFromProps<T>;
+  action?: {
+    create?: boolean;
+    update?: boolean;
+    delete?: boolean;
+  };
 }
 
 /**
@@ -35,11 +40,20 @@ export interface ProTableProps<T> extends TableProps<T, T, ValueType> {
 export const ProTable = <T extends BasicTableData>({
   api,
   formProps,
+  action,
   itemActionsRender,
   ...props
 }: ProTableProps<T>) => {
   const actionRef = useRef<ActionType>();
   const [activeNamespace, setActiveNamespace] = useState<string>('default');
+  const formAction = {
+    create: !!formProps,
+    update: !!formProps,
+    delete: !!formProps,
+  };
+  if (action) {
+    Object.assign(formAction, action);
+  }
 
   // 参数改变重载
   useEffect(() => {
@@ -90,7 +104,6 @@ export const ProTable = <T extends BasicTableData>({
       title: '命名空间',
       dataIndex: ['metadata', 'namespace'],
       valueType: 'select',
-
       initialValue: 'default',
       hideInTable: true,
       fieldProps: { allowClear: false },
@@ -104,12 +117,13 @@ export const ProTable = <T extends BasicTableData>({
     });
   }
 
-  // 渲染操作蓝
-  if (formProps) {
+  // 渲染操作栏
+  if (formAction.create) {
     const initialValues = lodash.merge(
-      lodash.cloneDeep(formProps.initialValues || {}),
+      lodash.cloneDeep(formProps?.initialValues || {}),
       { metadata: { namespace: activeNamespace } } as T,
     );
+
     tableProps.toolbar?.actions?.push(
       <DrawerFrom<T>
         key="create"
@@ -133,45 +147,50 @@ export const ProTable = <T extends BasicTableData>({
   }
 
   // 渲染数据记录操作
-  if (itemActionsRender || formProps) {
+  if (itemActionsRender || formAction.update || formAction.delete) {
     tableProps.columns?.push({
       title: '操作',
       valueType: 'option',
       align: 'right',
       render: (_, record) => {
-        const actions: ReactNode[] = formProps
-          ? [
-              <DrawerFrom<T>
-                title={props.headerTitle}
-                trigger={<Button type="link">编辑</Button>}
-                {...formProps}
-                key="update"
-                api={rest}
-                initialValues={record}
-                onFinish={async () => {
-                  message.success('保存成功');
+        const actions: ReactNode[] = [];
+        if (formAction.update) {
+          actions.push(
+            <DrawerFrom<T>
+              title={props.headerTitle}
+              trigger={<Button type="link">编辑</Button>}
+              {...formProps}
+              key="update"
+              api={rest}
+              initialValues={record}
+              onFinish={async () => {
+                message.success('保存成功');
+                actionRef.current?.reload();
+                return true;
+              }}
+            />,
+          );
+        }
+        if (formAction.delete) {
+          actions.push(
+            <Popconfirm
+              key="remove"
+              title="警告"
+              description="改操作不可撤销,你确定执行操作?"
+              onConfirm={async () => {
+                if (!record.metadata?.name) {
                   actionRef.current?.reload();
-                  return true;
-                }}
-              />,
-              <Popconfirm
-                key="remove"
-                title="警告"
-                description="改操作不可撤销,你确定执行操作?"
-                onConfirm={async () => {
-                  if (!record.metadata?.name) {
-                    actionRef.current?.reload();
-                    return;
-                  }
-                  await rest?.delete(record.metadata.name);
-                  message.success('执行成功');
-                  actionRef.current?.reload();
-                }}
-              >
-                <Button type="link">删除</Button>
-              </Popconfirm>,
-            ]
-          : [];
+                  return;
+                }
+                await rest?.delete(record.metadata.name);
+                message.success('执行成功');
+                actionRef.current?.reload();
+              }}
+            >
+              <Button type="link">删除</Button>
+            </Popconfirm>,
+          );
+        }
         return (
           <div style={{ textAlign: 'right' }}>
             {itemActionsRender ? itemActionsRender(record, actions) : actions}

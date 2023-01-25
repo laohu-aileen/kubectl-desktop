@@ -7,8 +7,14 @@ export default {
     req: Request<{ namespace: string }>,
     res: Response<CoreV1Event[]>,
   ) => {
-    const { namespace } = req.params;
-    const data = await core.listNamespacedEvent(namespace);
-    res.json(data.body.items);
+    try {
+      const { namespace } = req.params;
+      const data = await core.listNamespacedEvent(namespace);
+      res.json(data.body.items);
+    } catch (e: any) {
+      console.log(e);
+      res.status(500);
+      res.json({ message: e.message } as any);
+    }
   },
 };
