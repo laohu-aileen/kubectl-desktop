@@ -1,0 +1,21 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "sourceMap": true,
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "target": "ES2015",
+    "outDir": "../../target/main",
+    "declaration": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "baseUrl": "./"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "main",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "electron": "^22.0.3",
+    "electron-reload": "^2.0.0-alpha.1"
+  }
+}

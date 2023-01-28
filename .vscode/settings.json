@@ -31,6 +31,9 @@
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
-    "**/.DS_Store": true
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/.umi": true,
+    "**/.umi-production": true
   }
 }
