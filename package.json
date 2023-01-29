@@ -4,51 +4,35 @@
   "private": true,
   "description": "kubectl-desktop",
   "author": "胡永强 <odaytudio@qq.com>",
-  "main": "target/main/main.js",
   "workspaces": [
     "components/*",
     "projects/*"
   ],
   "scripts": {
     "build": "yarn workspaces run build",
-    "build:main": "yarn workspace main run build",
-    "build:render": "yarn workspace render run build",
-    "dev": "yarn workspace render run dev",
+    "dev:main": "yarn workspace main run dev",
+    "dev:render": "yarn workspace render run dev",
     "format": "prettier --cache --write .",
-    "make": "env-cmd electron-forge make",
-    "package": "env-cmd electron-forge package",
-    "prepare": "husky install",
-    "start": "yarn build:main && electron ."
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-dmg",
-          "config": {
-            "format": "ULFO"
-          }
-        }
-      ]
-    }
-  },
-  "dependencies": {
-    "@kubernetes/client-node": "^0.18.1"
+    "make": "yarn workspace main run make",
+    "package": "yarn workspace main run package",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.4",
-    "@electron-forge/maker-dmg": "^6.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
     "cross-env": "^7.0.3",
-    "electron": "^22.0.3",
     "env-cmd": "^10.1.0",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
-    "lint-staged": "^13.1.0",
-    "prettier": "^2.8.3",
-    "prettier-plugin-organize-imports": "^3.2.2",
-    "prettier-plugin-packagejson": "^2.4.0",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "prettier-plugin-organize-imports": "^3.1.1",
+    "prettier-plugin-packagejson": "^2.3.0",
+    "stylelint": "^14.13.0",
+    "stylelint-config-prettier": "^9.0.3",
     "typescript": "^4.9.4"
   }
 }

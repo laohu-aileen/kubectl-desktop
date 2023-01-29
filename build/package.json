@@ -1,0 +1,40 @@
+{
+  "name": "main",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "app/main.js",
+  "scripts": {
+    "build": "npm run package && npm run make",
+    "dev": "electron .",
+    "make": "electron-forge make",
+    "package": "electron-forge package"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "name": "kubectl",
+        "executableName": "App",
+        "icon": "./icon/favicon"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "format": "ULFO"
+          }
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.18.1"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-dmg": "^6.0.4",
+    "@types/node": "^18.11.18",
+    "electron": "^22.1.0",
+    "electron-reload": "^2.0.0-alpha.1",
+    "env-cmd": "^10.1.0"
+  }
+}

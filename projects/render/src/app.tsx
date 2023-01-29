@@ -20,6 +20,10 @@ export const layout = (): ProLayoutProps => ({
   rightContentRender: false,
   collapsedButtonRender: false,
   siderWidth: 180,
+  contentStyle: {
+    paddingBlock: 0,
+    paddingInline: 0,
+  },
   menu: {
     locale: false,
     type: 'sub',

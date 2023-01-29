@@ -12,10 +12,9 @@
     "noImplicitAny": false,
     "removeComments": true,
     "target": "ES2015",
-    "outDir": "../../target/main",
+    "outDir": "../../build/app",
     "declaration": false,
     "allowJs": true,
-    "resolveJsonModule": true,
-    "baseUrl": "./"
+    "resolveJsonModule": true
   }
 }

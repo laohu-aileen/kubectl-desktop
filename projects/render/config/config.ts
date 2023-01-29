@@ -9,7 +9,7 @@ export default defineConfig({
   npmClient: 'yarn',
   publicPath: env.NODE_ENV === 'production' ? './' : '/',
   history: { type: 'hash' },
-  outputPath: '../../target/render',
+  outputPath: '../../build/render',
   initialState,
   locale,
   antd: {},

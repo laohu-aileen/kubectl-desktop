@@ -1,3 +1,6 @@
 node_modules
 .umi
 .umi-production
+build/app
+build/out
+build/render
