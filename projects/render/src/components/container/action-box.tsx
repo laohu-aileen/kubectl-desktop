@@ -6,11 +6,9 @@ export interface ActionBoxProps {
   action?: ReactNode;
 }
 
-export const ActionBox = ({ children, action, ...props }: ActionBoxProps) => {
-  return (
-    <div {...props} className={style.actionBox}>
-      <div className={style.actionBoxTool}>{action}</div>
-      <div className={style.actionBoxContent}>{children}</div>
-    </div>
-  );
-};
+export const ActionBox = ({ children, action, ...props }: ActionBoxProps) => (
+  <div {...props} className={style.actionBox}>
+    <div className={style.actionBoxTool}>{action}</div>
+    <div className={style.actionBoxContent}>{children}</div>
+  </div>
+);

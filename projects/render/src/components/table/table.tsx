@@ -11,12 +11,14 @@ import type {
 } from '@ant-design/pro-components';
 import { ProTable as Table } from '@ant-design/pro-components';
 import type { ListToolBarMenu } from '@ant-design/pro-table/es/components/ListToolBar';
+import { useSize } from 'ahooks';
 import { Button, message, Popconfirm } from 'antd';
 import lodash from 'lodash';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import type { BasicTableData } from './definition';
+import style from './style.less';
 
 /**
  * 资源数据表格参数
@@ -25,6 +27,7 @@ export interface ProTableProps<T> extends TableProps<T, T, ValueType> {
   api?: RESTFul<T> | ((namespace: string) => RESTFul<T>);
   itemActionsRender?: (record: T, actions: ReactNode[]) => ReactNode[];
   formProps?: DrawerFromProps<T>;
+  autoSize?: boolean;
   action?: {
     create?: boolean;
     update?: boolean;
@@ -42,10 +45,14 @@ export const ProTable = <T extends BasicTableData>({
   api,
   formProps,
   action,
+  autoSize,
   itemActionsRender,
   ...props
 }: ProTableProps<T>) => {
   const actionRef = useRef<ActionType>();
+  const pageRef = useRef<any>();
+  const pageSize = useSize(pageRef);
+
   const [activeNamespace, setActiveNamespace] = useState<string>('default');
   const formAction = {
     create: !!formProps,
@@ -205,7 +212,14 @@ export const ProTable = <T extends BasicTableData>({
   }
 
   // 渲染表格组件
-  return <Table<T, T, ValueType> actionRef={actionRef} {...tableProps} />;
+  if (autoSize && pageSize?.height) {
+    tableProps.scroll = { y: pageSize.height - 132, x: 'auto' };
+  }
+  return (
+    <div className={autoSize ? style.tableAutoSizeBox : ''} ref={pageRef}>
+      <Table<T, T, ValueType> actionRef={actionRef} {...tableProps} />
+    </div>
+  );
 };
 
 /**

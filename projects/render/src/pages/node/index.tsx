@@ -5,6 +5,7 @@ import type { V1Node, V1NodeAddress } from '@kubernetes/client-node';
 export default () => (
   <ProTable<V1Node>
     api={node}
+    autoSize={true}
     headerTitle="节点"
     search={false}
     pagination={false}

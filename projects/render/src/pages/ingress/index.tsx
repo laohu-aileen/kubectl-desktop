@@ -1,4 +1,4 @@
-import { ActionBox } from '@/components/container';
+import { ActionBox, FullPage } from '@/components/container';
 import { ProFormEditorTable } from '@/components/input';
 import { ProTable } from '@/components/table';
 import { namespacedIngress, namespacedService } from '@/services';
@@ -127,18 +127,21 @@ const ruleColumns: ReactNode[] = [
 
 // 渲染组件
 export default () => (
-  <ProTable<V1Ingress>
-    api={namespacedIngress}
-    headerTitle="路由"
-    pagination={false}
-    columns={tableColumns}
-    formProps={{
-      columns: [
-        {
-          title: '规则',
-          items: ruleColumns,
-        },
-      ],
-    }}
-  />
+  <FullPage>
+    <ProTable<V1Ingress>
+      api={namespacedIngress}
+      autoSize={true}
+      headerTitle="路由"
+      pagination={false}
+      columns={tableColumns}
+      formProps={{
+        columns: [
+          {
+            title: '规则',
+            items: ruleColumns,
+          },
+        ],
+      }}
+    />
+  </FullPage>
 );

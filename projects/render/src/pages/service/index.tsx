@@ -1,3 +1,4 @@
+import { FullPage } from '@/components/container';
 import { ProFormEditorTable, ProFormMap } from '@/components/input';
 import { WorkloadSelectModal } from '@/components/popup';
 import { ProTable } from '@/components/table';
@@ -154,18 +155,21 @@ const specColumns: ReactNode[] = [
 
 // 页面渲染
 export default () => (
-  <ProTable<V1Service>
-    api={namespacedService}
-    headerTitle="服务"
-    pagination={false}
-    columns={tableColumns}
-    formProps={{
-      columns: [
-        {
-          title: '规格',
-          items: specColumns,
-        },
-      ],
-    }}
-  />
+  <FullPage>
+    <ProTable<V1Service>
+      api={namespacedService}
+      autoSize={true}
+      headerTitle="服务"
+      pagination={false}
+      columns={tableColumns}
+      formProps={{
+        columns: [
+          {
+            title: '规格',
+            items: specColumns,
+          },
+        ],
+      }}
+    />
+  </FullPage>
 );

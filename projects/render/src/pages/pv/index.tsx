@@ -1,3 +1,4 @@
+import { FullPage } from '@/components/container';
 import { ProTable } from '@/components/table';
 import { persistentVolume, storageClass } from '@/services';
 import type { ValueType } from '@/value-types';
@@ -204,18 +205,21 @@ const specColumns: ReactNode[] = [
 
 // 渲染组件
 export default () => (
-  <ProTable<V1PersistentVolume>
-    api={persistentVolume}
-    headerTitle="存储卷"
-    pagination={false}
-    columns={tableColumns}
-    formProps={{
-      columns: [
-        {
-          title: '规格',
-          items: specColumns,
-        },
-      ],
-    }}
-  />
+  <FullPage>
+    <ProTable<V1PersistentVolume>
+      api={persistentVolume}
+      autoSize={true}
+      headerTitle="存储卷"
+      pagination={false}
+      columns={tableColumns}
+      formProps={{
+        columns: [
+          {
+            title: '规格',
+            items: specColumns,
+          },
+        ],
+      }}
+    />
+  </FullPage>
 );

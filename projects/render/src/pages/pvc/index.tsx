@@ -1,3 +1,4 @@
+import { FullPage } from '@/components/container';
 import { ProFormMap } from '@/components/input';
 import { PvSelectModal } from '@/components/popup/pv-select-modal';
 import { ProTable } from '@/components/table';
@@ -189,18 +190,21 @@ const specColumns: ReactNode[] = [
 
 // 渲染组件
 export default () => (
-  <ProTable<V1PersistentVolumeClaim>
-    api={namespacedPersistentVolumeClaim}
-    headerTitle="存储声明"
-    pagination={false}
-    columns={tableColumns}
-    formProps={{
-      columns: [
-        {
-          title: '规格',
-          items: specColumns,
-        },
-      ],
-    }}
-  />
+  <FullPage>
+    <ProTable<V1PersistentVolumeClaim>
+      api={namespacedPersistentVolumeClaim}
+      autoSize={true}
+      headerTitle="存储声明"
+      pagination={false}
+      columns={tableColumns}
+      formProps={{
+        columns: [
+          {
+            title: '规格',
+            items: specColumns,
+          },
+        ],
+      }}
+    />
+  </FullPage>
 );
